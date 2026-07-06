@@ -1,5 +1,5 @@
 Django==5.2.15
-psycopg[binary]==3.2.9
+psycopg[binary]==3.2.13
 python-decouple==3.8
 dj-database-url==2.1.0
 reportlab==5.0.0
