@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Add Meeting</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: Arial; background: #f0f2f5; }
+.navbar { background: #4CAF50; padding: 1rem 2rem; color: white; display: flex; justify-content: space-between; align-items: center; }
+.navbar a { color: white; text-decoration: none; }
+.container { padding: 2rem; max-width: 700px; margin: auto; }
+.form-card { background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+.form-title { color: #4CAF50; font-size: 1.4rem; margin-bottom: 0.3rem; }
+.form-subtitle { color: #777; font-size: 0.9rem; margin-bottom: 2rem; }
+.form-group { margin-bottom: 1.2rem; }
+label { display: block; color: #555; font-weight: bold; margin-bottom: 0.4rem; font-size: 0.9rem; }
+input, select, textarea { width: 100%; padding: 10px 14px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.95rem; font-family: Arial; }
+input:focus, select:focus, textarea:focus { outline: none; border-color: #4CAF50; box-shadow: 0 0 0 3px rgba(76,175,80,0.1); }
+textarea { height: 90px; resize: vertical; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.btn-save { background: #4CAF50; color: white; padding: 12px; width: 100%; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; margin-top: 1rem; }
+.btn-save:hover { background: #45a049; }
+.error { background: #ffebee; color: #c62828; padding: 0.8rem; border-radius: 8px; margin-bottom: 1rem; }
+</style>
+</head>
+<body>
+<div class="navbar">
+  <span>🎓 MentorApp</span>
+  <a href="/meeting/view/{{ student.id }}">← Back</a>
+</div>
+<div class="container">
+  <div class="form-card">
+    <div class="form-title">📝 Add Meeting</div>
+    <div class="form-subtitle">Student: <b>{{ student.name }}</b> | {{ student.department }} | Roll: {{ student.roll_number }}</div>
+    {% if error %}<div class="error">⚠️ {{ error }}</div>{% endif %}
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-row">
+        <div class="form-group">
+          <label>📅 Date</label>
+          <input type="date" name="date" required>
+        </div>
+        <div class="form-group">
+          <label>📌 Meeting Type</label>
+          <select name="meeting_type">
+            <option value="academic">Academic</option>
+            <option value="activity">Activity</option>
+            <option value="career">Career</option>
+            <option value="general">General</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>💬 Discussion Notes</label>
+        <textarea name="discussion" placeholder="What was discussed in the meeting..." required></textarea>
+      </div>
+      <div class="form-group">
+        <label>📖 Guidance Given</label>
+        <textarea name="guidance" placeholder="What guidance was provided..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>✅ Follow Up Action</label>
+        <textarea name="follow_up" placeholder="What needs to be done next..."></textarea>
+      </div>
+      <button class="btn-save" type="submit">💾 Save Meeting</button>
+    </form>
+  </div>
+</div>
+</body>
+</html>

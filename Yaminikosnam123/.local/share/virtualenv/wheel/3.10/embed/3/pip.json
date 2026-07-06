@@ -1,0 +1,13 @@
+{
+  "completed": "2026-03-30T06:19:12.402656Z",
+  "periodic": true,
+  "started": "2026-03-30T06:19:08.044740Z",
+  "versions": [
+    {
+      "filename": "pip-26.0.1-py3-none-any.whl",
+      "found_date": "2026-03-30T06:19:08.441648Z",
+      "release_date": "2026-02-05T02:20:16.000000Z",
+      "source": "periodic"
+    }
+  ]
+}

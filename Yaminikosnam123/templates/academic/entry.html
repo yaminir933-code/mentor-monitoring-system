@@ -1,0 +1,167 @@
+{% extends 'base.html' %}   <!-- Change this line if your main dashboard uses a different base template name -->
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4 text-center">📚 Academic Guidance Module - Kasturba Women's College</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Student & Semester Selection -->
+    <form method="post" id="main-form">
+        {% csrf_token %}
+        <input type="hidden" name="action" id="action" value="save_marks">
+
+        <div class="row mb-4">
+            <div class="col-md-5">
+                <label class="form-label fw-bold">Select Student</label>
+                <select name="student" id="student" class="form-select" required>
+                    <option value="">-- Choose Student --</option>
+                    {% for stu in students %}
+                    <option value="{{ stu.id }}">{{ stu.name }} {% if stu.roll_number %}({{ stu.roll_number }}){% endif %}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-bold">Select Semester</label>
+                <select name="semester" id="semester" class="form-select" required>
+                    <option value="">-- Semester --</option>
+                    {% for i in '123456'|make_list %}
+                    <option value="{{ i }}">Semester {{ i }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <!-- Marks Entry Table -->
+        <div id="marks-container" class="table-responsive" style="display: none;">
+            <table class="table table-bordered table-hover">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Subject Code</th>
+                        <th>Subject Name</th>
+                        <th>Internal Marks (0-100)</th>
+                        <th>External Marks (0-100)</th>
+                        <th>Total</th>
+                        <th>Result</th>
+                    </tr>
+                </thead>
+                <tbody id="marks-body"></tbody>
+            </table>
+        </div>
+
+        <button type="submit" id="save-marks-btn" class="btn btn-primary btn-lg mt-3" style="display: none;">
+            ✅ Save Marks & Identify Weak Subjects
+        </button>
+    </form>
+
+    <!-- Guidance for Weak Subjects -->
+    {% if weak_records %}
+    <hr>
+    <h4 class="text-danger">⚠️ Weak / Backlog Subjects Detected</h4>
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="save_guidance">
+        <input type="hidden" name="student" value="{{ student.id }}">
+        <input type="hidden" name="semester" value="{{ semester }}">
+
+        {% for record in weak_records %}
+        <div class="card mb-3 border-danger">
+            <div class="card-body">
+                <h6>{{ record.subject.code }} - {{ record.subject.name }}</h6>
+                <p class="text-muted mb-2">Marks: {{ record.total_marks }} (Fail)</p>
+                <textarea name="guidance_note_{{ record.id }}" class="form-control" rows="4" 
+                    placeholder="Write guidance / improvement plan for this subject..."></textarea>
+            </div>
+        </div>
+        {% endfor %}
+
+        <button type="submit" class="btn btn-success btn-lg">💾 Save All Guidance Notes</button>
+    </form>
+    {% endif %}
+
+    <!-- Performance Summary -->
+    {% if summary %}
+    <hr>
+    <div class="card border-success">
+        <div class="card-header bg-success text-white">
+            <h4>📊 Final Performance Summary - {{ student.name }} (Semester {{ semester }})</h4>
+        </div>
+        <div class="card-body">
+            <div class="row text-center">
+                <div class="col-4">
+                    <h5>Total Subjects</h5>
+                    <h3 class="fw-bold">{{ total_subjects }}</h3>
+                </div>
+                <div class="col-4">
+                    <h5>Backlogs</h5>
+                    <h3 class="text-danger fw-bold">{{ backlogs }}</h3>
+                </div>
+                <div class="col-4">
+                    <h5>Average Marks</h5>
+                    <h3 class="fw-bold">{{ avg_marks }}%</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="text-center mt-4">
+        <a href="{% url 'academic_guidance_entry' %}" class="btn btn-outline-primary">Start New Entry</a>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+const subjectsData = {{ subjects_json|safe }};
+
+document.getElementById('semester').addEventListener('change', loadSubjects);
+
+function loadSubjects() {
+    const sem = parseInt(document.getElementById('semester').value);
+    const stu = document.getElementById('student').value;
+    if (!sem || !stu) return;
+
+    const tbody = document.getElementById('marks-body');
+    tbody.innerHTML = '';
+
+    const filtered = subjectsData.filter(s => s.semester === sem);
+
+    filtered.forEach(sub => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td><strong>${sub.code}</strong></td>
+            <td>${sub.name}</td>
+            <td><input type="number" min="0" max="100" name="internal_${sub.id}" class="form-control" oninput="calculate(this)" required></td>
+            <td><input type="number" min="0" max="100" name="external_${sub.id}" class="form-control" oninput="calculate(this)" required></td>
+            <td class="fw-bold text-center" id="total_${sub.id}">0</td>
+            <td class="text-center" id="result_${sub.id}"></td>
+        `;
+        tbody.appendChild(row);
+    });
+
+    document.getElementById('marks-container').style.display = 'block';
+    document.getElementById('save-marks-btn').style.display = 'block';
+}
+
+function calculate(input) {
+    const id = input.name.split('_')[1];
+    const internal = parseFloat(document.querySelector(`[name="internal_${id}"]`).value) || 0;
+    const external = parseFloat(document.querySelector(`[name="external_${id}"]`).value) || 0;
+    const total = internal + external;
+
+    document.getElementById(`total_${id}`).textContent = total;
+
+    const resultCell = document.getElementById(`result_${id}`);
+    if (internal > 0 && external > 0) {
+        resultCell.innerHTML = total >= 40 
+            ? '<span class="badge bg-success">Pass</span>' 
+            : '<span class="badge bg-danger">Fail</span>';
+    }
+}
+</script>
+{% endblock %}

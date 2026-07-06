@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Add Activity</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:Arial;background:#f0f2f5;}
+.navbar{background:#FF9800;padding:1rem 2rem;color:white;display:flex;justify-content:space-between;align-items:center;}
+.navbar a{color:white;text-decoration:none;}
+.container{padding:2rem;max-width:800px;margin:auto;}
+.card{background:white;border-radius:12px;padding:2rem;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+h2{color:#333;margin-bottom:1.5rem;border-bottom:2px solid #FF9800;padding-bottom:8px;}
+.form-group{margin-bottom:1rem;}
+label{display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:#555;}
+input,select,textarea{width:100%;padding:10px;border:1px solid #ddd;border-radius:6px;font-size:14px;font-family:Arial;}
+textarea{height:80px;resize:vertical;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#FF9800;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.btn-submit{background:#FF9800;color:white;padding:12px 30px;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;width:100%;margin-top:10px;}
+.btn-submit:hover{background:#e65100;}
+.error{background:#fdf0f0;border-left:4px solid #e53935;color:#e53935;padding:12px;border-radius:8px;margin-bottom:1rem;font-size:14px;}
+.success{background:#f0fdf4;border-left:4px solid #4CAF50;color:#2e7d32;padding:12px;border-radius:8px;margin-bottom:1rem;font-size:14px;}
+.upload-box{border:2px dashed #FF9800;border-radius:8px;padding:1rem;text-align:center;background:#fff8e1;}
+small{color:#777;font-size:12px;}
+</style>
+</head>
+<body>
+<div class="navbar">
+  <span>🎓 MentorApp</span>
+  <a href="/activity/">← Back</a>
+</div>
+<div class="container">
+<div class="card">
+<h2>➕ Add Activity — {{ student.name }}</h2>
+{% if error %}<div class="error">{{ error }}</div>{% endif %}
+{% if success %}<div class="success">{{ success }}</div>{% endif %}
+<form method="POST" enctype="multipart/form-data">
+{% csrf_token %}
+<div class="form-row">
+<div class="form-group">
+<label>Activity Type *</label>
+<select name="activity_type" required>
+<option value="" disabled selected>Select type</option>
+<option value="Sports">Sports</option>
+<option value="Cultural">Cultural Events</option>
+<option value="Technical">Technical Events</option>
+<option value="Seminar">Seminars</option>
+<option value="Hackathon">Hackathons</option>
+<option value="NCC">NCC</option>
+<option value="NSS">NSS</option>
+<option value="Arts">Arts & Crafts</option>
+<option value="Literary">Literary Events</option>
+<option value="Competition">Competitions</option>
+<option value="Workshop">Workshops</option>
+<option value="Social">Social Service</option>
+<option value="College">College Activities</option>
+<option value="Other">Other</option>
+</select>
+</div>
+<div class="form-group">
+<label>Activity Name *</label>
+<input type="text" name="activity_name" placeholder="Enter activity name" required/>
+</div>
+</div>
+<div class="form-row">
+<div class="form-group">
+<label>Date *</label>
+<input type="date" name="date" required/>
+</div>
+<div class="form-group">
+<label>Participation Status *</label>
+<select name="participation_status" required>
+<option value="" disabled selected>Select status</option>
+<option value="Active">Active</option>
+<option value="Completed">Completed</option>
+<option value="Ongoing">Ongoing</option>
+<option value="Not Participating">Not Participating</option>
+</select>
+</div>
+</div>
+<div class="form-row">
+<div class="form-group">
+<label>Achievement</label>
+<input type="text" name="achievement" placeholder="e.g. 1st Place, Participation"/>
+</div>
+<div class="form-group">
+<label>Score / Grade</label>
+<input type="text" name="score" placeholder="e.g. 95/100"/>
+</div>
+</div>
+<div class="form-group">
+<label>Skills Gained</label>
+<textarea name="skills_gained" placeholder="Skills gained from this activity..."></textarea>
+</div>
+<div class="form-group">
+<label>Reason Not Participating (if any)</label>
+<textarea name="reason_not_participating" placeholder="Reason if not participating..."></textarea>
+</div>
+<div class="form-group">
+<label>Guidance Notes</label>
+<textarea name="guidance_notes" placeholder="Mentor guidance notes..."></textarea>
+</div>
+<div class="form-group">
+<label>Encouragement Plan</label>
+<textarea name="encouragement_plan" placeholder="Plan to encourage student..."></textarea>
+</div>
+<div class="form-group">
+<label>📎 Upload Certificate / Photo / Video / Geotag</label>
+<div class="upload-box">
+<input type="file" name="upload_file" accept=".pdf,.jpg,.jpeg,.png,.mp4,.gif"/>
+<br/>
+<small>Accepted: PDF, Images (JPG/PNG), Videos (MP4), GIF</small>
+</div>
+</div>
+<button type="submit" class="btn-submit">💾 Save Activity</button>
+</form>
+</div>
+</div>
+</body>
+</html>

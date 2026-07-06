@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - MentorApp</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 500px;
+            padding: 3rem 2rem;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 0.3rem;
+        }
+
+        .header p {
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        .input-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.9rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        input::placeholder {
+            color: #999;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 1rem;
+            cursor: pointer;
+            color: #999;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+
+        .password-toggle:hover {
+            color: #667eea;
+        }
+
+        .password-strength {
+            display: none;
+            margin-top: 0.5rem;
+            padding: 0.6rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .password-strength.weak {
+            display: block;
+            background: #fadbd8;
+            color: #c0392b;
+        }
+
+        .password-strength.fair {
+            display: block;
+            background: #fdebd0;
+            color: #d68910;
+        }
+
+        .password-strength.good {
+            display: block;
+            background: #d5f4e6;
+            color: #27ae60;
+        }
+
+        .password-strength.strong {
+            display: block;
+            background: #d5f4e6;
+            color: #27ae60;
+        }
+
+        .strength-bar {
+            width: 100%;
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .strength-indicator {
+            height: 100%;
+            width: 0%;
+            transition: all 0.3s;
+        }
+
+        .weak-bar { width: 25%; background: #e74c3c; }
+        .fair-bar { width: 50%; background: #f39c12; }
+        .good-bar { width: 75%; background: #27ae60; }
+        .strong-bar { width: 100%; background: #27ae60; }
+
+        .error-message {
+            color: #e74c3c;
+            background: #fadbd8;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            border-left: 4px solid #e74c3c;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .success-message {
+            color: #27ae60;
+            background: #d5f4e6;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            border-left: 4px solid #27ae60;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .password-requirements {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: #555;
+        }
+
+        .requirement {
+            padding: 0.3rem 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .requirement-icon {
+            margin-right: 0.5rem;
+            font-weight: bold;
+        }
+
+        .requirement.met .requirement-icon {
+            color: #27ae60;
+        }
+
+        .requirement.not-met .requirement-icon {
+            color: #e74c3c;
+        }
+
+        .btn-signup {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1.5rem;
+        }
+
+        .btn-signup:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-signup:active {
+            transform: translateY(0);
+        }
+
+        .btn-signup:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .login-link p {
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 2rem 1.5rem;
+                max-width: 100%;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🎓</div>
+            <h1>Create Account</h1>
+            <p>Join MentorApp community today</p>
+        </div>
+
+        {% if error %}
+        <div class="error-message show">
+            <strong>⚠️ Error:</strong> {{ error }}
+        </div>
+        {% endif %}
+
+        <form method="POST" id="signupForm" onsubmit="return validateForm()">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="name">Full Name <span class="required">*</span></label>
+                <input 
+                    type="text" 
+                    id="name" 
+                    name="name" 
+                    placeholder="Enter your full name"
+                    required
+                    minlength="2"
+                    maxlength="100"
+                    pattern="[a-zA-Z\s]+"
+                    title="Please enter a valid name (letters and spaces only)"
+                    autofocus
+                >
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label for="email">Email Address <span class="required">*</span></label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="your.email@example.com"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input 
+                        type="tel" 
+                        id="phone" 
+                        name="phone" 
+                        placeholder="Enter your phone number"
+                        pattern="[0-9\-\+\s\(\)]+"
+                        maxlength="20"
+                    >
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="department">Department <span class="required">*</span></label>
+                <select id="department" name="department" required>
+                    <option value="">Select your department</option>
+                    <option value="Computer Science">Computer Science</option>
+                    <option value="Information Technology">Information Technology</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Mechanical">Mechanical</option>
+                    <option value="Civil">Civil</option>
+                    <option value="Electrical">Electrical</option>
+                    <option value="Chemical">Chemical</option>
+                    <option value="Biotechnology">Biotechnology</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password <span class="required">*</span></label>
+                <div class="input-group">
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        placeholder="Create a strong password"
+                        required
+                        minlength="8"
+                        oninput="checkPasswordStrength()"
+                    >
+                    <span class="password-toggle" onclick="togglePasswordVisibility('password')">👁️</span>
+                </div>
+                <div class="strength-bar">
+                    <div class="strength-indicator" id="strengthIndicator"></div>
+                </div>
+                <div class="password-strength" id="passwordStrength"></div>
+                <div class="password-requirements">
+                    <strong>Password Requirements:</strong>
+                    <div class="requirement not-met" id="req-length">
+                        <span class="requirement-icon">✓</span> At least 8 characters
+                    </div>
+                    <div class="requirement not-met" id="req-uppercase">
+                        <span class="requirement-icon">✓</span> One uppercase letter (A-Z)
+                    </div>
+                    <div class="requirement not-met" id="req-lowercase">
+                        <span class="requirement-icon">✓</span> One lowercase letter (a-z)
+                    </div>
+                    <div class="requirement not-met" id="req-number">
+                        <span class="requirement-icon">✓</span> One number (0-9)
+                    </div>
+                    <div class="requirement not-met" id="req-special">
+                        <span class="requirement-icon">✓</span> One special character (!@#$%^&*)
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password <span class="required">*</span></label>
+                <div class="input-group">
+                    <input 
+                        type="password" 
+                        id="confirm_password" 
+                        name="confirm_password" 
+                        placeholder="Confirm your password"
+                        required
+                        minlength="8"
+                        oninput="checkPasswordMatch()"
+                    >
+                    <span class="password-toggle" onclick="togglePasswordVisibility('confirm_password')">👁️</span>
+                </div>
+                <div id="passwordMatchStatus" style="margin-top: 0.5rem; font-size: 0.9rem;"></div>
+            </div>
+
+            <button type="submit" class="btn-signup" id="submitBtn">Create Account</button>
+
+            <div class="login-link">
+                <p>Already have an account?</p>
+                <a href="/login/">Login Here</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function togglePasswordVisibility(fieldId) {
+            const field = document.getElementById(fieldId);
+            const toggle = event.target;
+            
+            if (field.type === 'password') {
+                field.type = 'text';
+                toggle.textContent = '👁️‍🗨️';
+            } else {
+                field.type = 'password';
+                toggle.textContent = '👁️';
+            }
+        }
+
+        function checkPasswordStrength() {
+            const password = document.getElementById('password').value;
+            const strengthDiv = document.getElementById('passwordStrength');
+            const indicator = document.getElementById('strengthIndicator');
+            
+            let strength = 0;
+            let strengthText = '';
+            let strengthClass = '';
+
+            // Check requirements
+            const requirements = {
+                'req-length': password.length >= 8,
+                'req-uppercase': /[A-Z]/.test(password),
+                'req-lowercase': /[a-z]/.test(password),
+                'req-number': /[0-9]/.test(password),
+                'req-special': /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
+            };
+
+            // Update requirement indicators
+            Object.keys(requirements).forEach(key => {
+                const element = document.getElementById(key);
+                if (requirements[key]) {
+                    element.classList.remove('not-met');
+                    element.classList.add('met');
+                } else {
+                    element.classList.add('not-met');
+                    element.classList.remove('met');
+                }
+            });
+
+            // Calculate strength
+            strength = Object.values(requirements).filter(Boolean).length;
+
+            if (strength === 0) {
+                strengthDiv.textContent = '';
+                indicator.className = 'strength-indicator';
+            } else if (strength < 2) {
+                strengthText = '❌ Weak Password';
+                strengthClass = 'weak';
+                indicator.className = 'strength-indicator weak-bar';
+            } else if (strength < 4) {
+                strengthText = '⚠️ Fair Password';
+                strengthClass = 'fair';
+                indicator.className = 'strength-indicator fair-bar';
+            } else if (strength < 5) {
+                strengthText = '✓ Good Password';
+                strengthClass = 'good';
+                indicator.className = 'strength-indicator good-bar';
+            } else {
+                strengthText = '🔒 Strong Password';
+                strengthClass = 'strong';
+                indicator.className = 'strength-indicator strong-bar';
+            }
+
+            strengthDiv.textContent = strengthText;
+            strengthDiv.className = `password-strength ${strengthClass}`;
+
+            checkPasswordMatch();
+        }
+
+        function checkPasswordMatch() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            const matchStatus = document.getElementById('passwordMatchStatus');
+
+            if (confirmPassword === '') {
+                matchStatus.textContent = '';
+                return;
+            }
+
+            if (password === confirmPassword && password.length >= 8) {
+                matchStatus.innerHTML = '<span style="color: #27ae60; font-weight: bold;">✓ Passwords match!</span>';
+                document.getElementById('submitBtn').disabled = false;
+            } else if (password === confirmPassword) {
+                matchStatus.innerHTML = '<span style="color: #f39c12; font-weight: bold;">⚠️ Password must be at least 8 characters</span>';
+                document.getElementById('submitBtn').disabled = true;
+            } else {
+                matchStatus.innerHTML = '<span style="color: #e74c3c; font-weight: bold;">✗ Passwords do not match</span>';
+                document.getElementById('submitBtn').disabled = true;
+            }
+        }
+
+        function validateForm() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+
+            if (password !== confirmPassword) {
+                alert('Passwords do not match!');
+                return false;
+            }
+
+            if (password.length < 8) {
+                alert('Password must be at least 8 characters!');
+                return false;
+            }
+
+            return true;
+        }
+
+        // Auto-hide error message after 5 seconds
+        const errorMessage = document.querySelector('.error-message');
+        if (errorMessage && errorMessage.classList.contains('show')) {
+            setTimeout(() => {
+                errorMessage.style.opacity = '0';
+                errorMessage.style.transition = 'opacity 0.3s';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

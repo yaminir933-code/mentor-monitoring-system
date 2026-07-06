@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Manage Students</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:sans-serif;background:#FDF6ED;min-height:100vh;}
+nav{background:#7B1C2E;padding:16px 40px;display:flex;justify-content:space-between;align-items:center;}
+nav h1{color:white;font-size:18px;}
+nav a{color:rgba(255,255,255,0.8);text-decoration:none;font-size:14px;}
+.container{max-width:1000px;margin:40px auto;padding:0 24px;}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;}
+.top h2{font-size:22px;color:#1a0a0f;}
+.add-btn{background:#7B1C2E;color:white;padding:10px 20px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;}
+.filters{display:flex;gap:10px;margin-bottom:24px;}
+.filter-btn{padding:9px 20px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;border:1.5px solid #7B1C2E;color:#7B1C2E;}
+.filter-btn.active{background:#7B1C2E;color:white;}
+.card{background:white;border-radius:16px;box-shadow:0 4px 24px rgba(123,28,46,0.08);overflow:hidden;}
+table{width:100%;border-collapse:collapse;}
+th{background:#7B1C2E;color:white;padding:14px 16px;text-align:left;font-size:13px;}
+td{padding:13px 16px;border-bottom:1px solid #f0e6ea;font-size:14px;color:#1a0a0f;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#fdf0f3;}
+.badge-degree{background:#e8f4fd;color:#1565c0;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;}
+.badge-pg{background:#f3e8fd;color:#6a1b9a;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;}
+.empty{text-align:center;padding:40px;color:#6b4050;}
+</style>
+</head>
+<body>
+<nav>
+<h1>🎓 KGWC Mentor System</h1>
+<a href="/dashboard">← Back to Dashboard</a>
+</nav>
+<div class="container">
+<div class="top">
+<h2>Manage Students</h2>
+<a href="/add-student" class="add-btn">+ Add Student</a>
+</div>
+<div class="filters">
+<a href="/manage-students?type=all" class="filter-btn {% if filter_type == 'all' %}active{% endif %}">All Students</a>
+<a href="/manage-students?type=degree" class="filter-btn {% if filter_type == 'degree' %}active{% endif %}">Degree Only</a>
+<a href="/manage-students?type=pg" class="filter-btn {% if filter_type == 'pg' %}active{% endif %}">PG Only</a>
+</div>
+<div class="card">
+{% if students %}
+<table>
+<thead>
+<tr>
+<th>Full Name</th>
+<th>Roll No</th>
+<th>Department</th>
+<th>Email</th>
+<th>Phone</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+{% for s in students %}
+<tr>
+<td>{{s.full_name}}</td>
+<td>{{s.roll_no}}</td>
+<td>{{s.department}}</td>
+<td>{{s.email}}</td>
+<td>{{s.phone}}</td>
+<td>{% if s.student_type == 'pg' %}<span class="badge-pg">PG</span>{% else %}<span class="badge-degree">Degree</span>{% endif %}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% else %}
+<div class="empty">No students found. <a href="/add-student">Add a student</a></div>
+{% endif %}
+</div>
+</div>
+</body>
+</html>

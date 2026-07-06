@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h2>Are you sure you want to delete this meeting?</h2>
+<p>{{ meeting }}</p>
+<form method="post">
+  {% csrf_token %}
+  <button type="submit">Yes, Delete</button>
+  <a href="/meeting/view/{{ meeting.student.id }}">No, Cancel</a>
+</form>
+</body>
+</html>

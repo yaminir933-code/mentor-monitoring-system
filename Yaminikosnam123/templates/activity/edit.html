@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Edit Activity</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: Arial; background: #f0f2f5; }
+.navbar { background: #FF9800; padding: 1rem 2rem; color: white; display: flex; justify-content: space-between; align-items: center; }
+.navbar a { color: white; text-decoration: none; }
+.container { padding: 2rem; max-width: 700px; margin: auto; }
+.form-card { background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+.form-title { color: #FF9800; font-size: 1.4rem; margin-bottom: 0.3rem; }
+.form-subtitle { color: #777; font-size: 0.9rem; margin-bottom: 2rem; }
+.section-title { color: #FF9800; font-weight: bold; margin: 1.5rem 0 1rem; border-bottom: 2px solid #fff3e0; padding-bottom: 0.5rem; }
+.form-group { margin-bottom: 1.2rem; }
+label { display: block; color: #555; font-weight: bold; margin-bottom: 0.4rem; font-size: 0.9rem; }
+input, select, textarea { width: 100%; padding: 10px 14px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.95rem; font-family: Arial; }
+input:focus, select:focus, textarea:focus { outline: none; border-color: #FF9800; }
+textarea { height: 80px; resize: vertical; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
+.btn-save { background: #FF9800; color: white; padding: 12px; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; }
+.btn-cancel { background: #757575; color: white; padding: 12px; border-radius: 8px; text-decoration: none; text-align: center; }
+.error { background: #ffebee; color: #c62828; padding: 0.8rem; border-radius: 8px; margin-bottom: 1rem; }
+.success { background: #e8f5e9; color: #2e7d32; padding: 0.8rem; border-radius: 8px; margin-bottom: 1rem; }
+</style>
+</head>
+<body>
+<div class="navbar">
+  <span>🎓 MentorApp</span>
+  <a href="/activity/view/{{ record.student.id }}">← Back</a>
+</div>
+<div class="container">
+  <div class="form-card">
+    <div class="form-title">✏️ Edit Activity Record</div>
+    <div class="form-subtitle">Student: <b>{{ record.student.name }}</b></div>
+    {% if error %}<div class="error">⚠️ {{ error }}</div>{% endif %}
+    {% if success %}<div class="success">✅ {{ success }} — <a href="/activity/view/{{ record.student.id }}">View All Activities</a></div>{% endif %}
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="section-title">📋 Activity Details</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Activity Type</label>
+          <select name="activity_type">
+            <option value="Sports" {% if record.activity_type == 'Sports' %}selected{% endif %}>🏅 Sports</option>
+            <option value="Cultural" {% if record.activity_type == 'Cultural' %}selected{% endif %}>🎭 Cultural</option>
+            <option value="Technical" {% if record.activity_type == 'Technical' %}selected{% endif %}>💻 Technical</option>
+            <option value="Seminar" {% if record.activity_type == 'Seminar' %}selected{% endif %}>🎤 Seminar</option>
+            <option value="Hackathon" {% if record.activity_type == 'Hackathon' %}selected{% endif %}>💡 Hackathon</option>
+            <option value="NCC" {% if record.activity_type == 'NCC' %}selected{% endif %}>🪖 NCC</option>
+            <option value="NSS" {% if record.activity_type == 'NSS' %}selected{% endif %}>🌿 NSS</option>
+            <option value="Arts" {% if record.activity_type == 'Arts' %}selected{% endif %}>🎨 Arts</option>
+            <option value="Literary" {% if record.activity_type == 'Literary' %}selected{% endif %}>📚 Literary</option>
+            <option value="Competition" {% if record.activity_type == 'Competition' %}selected{% endif %}>🏆 Competition</option>
+            <option value="Workshop" {% if record.activity_type == 'Workshop' %}selected{% endif %}>🔧 Workshop</option>
+            <option value="Social" {% if record.activity_type == 'Social' %}selected{% endif %}>🌍 Social</option>
+            <option value="College" {% if record.activity_type == 'College' %}selected{% endif %}>🏫 College</option>
+            <option value="Other" {% if record.activity_type == 'Other' %}selected{% endif %}>📌 Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Activity Name</label>
+          <input type="text" name="activity_name" value="{{ record.activity_name }}" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>📅 Date</label>
+          <input type="date" name="date" value="{{ record.date }}" required>
+        </div>
+        <div class="form-group">
+          <label>Participation Status</label>
+          <select name="participation_status">
+            <option value="Active" {% if record.participation_status == 'Active' %}selected{% endif %}>✅ Active</option>
+            <option value="Completed" {% if record.participation_status == 'Completed' %}selected{% endif %}>🏁 Completed</option>
+            <option value="Ongoing" {% if record.participation_status == 'Ongoing' %}selected{% endif %}>🔄 Ongoing</option>
+            <option value="Not Participating" {% if record.participation_status == 'Not Participating' %}selected{% endif %}>❌ Not Participating</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Achievement</label>
+          <input type="text" name="achievement" value="{{ record.achievement }}">
+        </div>
+        <div class="form-group">
+          <label>Score</label>
+          <input type="text" name="score" value="{{ record.score }}">
+        </div>
+      </div>
+      <div class="section-title">💡 Skills & Guidance</div>
+      <div class="form-group">
+        <label>Reason if Not Participating</label>
+        <textarea name="reason_not_participating">{{ record.reason_not_participating }}</textarea>
+      </div>
+      <div class="form-group">
+        <label>Skills Gained</label>
+        <textarea name="skills_gained">{{ record.skills_gained }}</textarea>
+      </div>
+      <div class="form-group">
+        <label>Guidance Notes</label>
+        <textarea name="guidance_notes">{{ record.guidance_notes }}</textarea>
+      </div>
+      <div class="form-group">
+        <label>Encouragement Plan</label>
+        <textarea name="encouragement_plan">{{ record.encouragement_plan }}</textarea>
+      </div>
+      <div class="form-group">
+        <label>📎 Upload Certificate / Photo / Video</label>
+        {% if record.upload_file %}
+        <p style="color:#4CAF50;font-size:13px;">Current file: <a href="{{ record.upload_file.url }}" target="_blank">View current file</a></p>
+        {% endif %}
+        <input type="file" name="upload_file" accept=".pdf,.jpg,.jpeg,.png,.mp4,.gif"/>
+        <small style="color:#777;">Leave empty to keep existing file</small>
+      </div>
+      <div class="btn-row">
+        <button class="btn-save" type="submit">💾 Update Activity</button>
+        <a class="btn-cancel" href="/activity/view/{{ record.student.id }}">✖ Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+</body>
+</html>

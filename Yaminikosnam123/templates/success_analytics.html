@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Success Analytics Dashboard</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { 
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+  background: #f5f7fa;
+}
+
+.navbar {
+  background: white;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar a {
+  color: #1a237e;
+  text-decoration: none;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.navbar a:hover { background: #f5f7fa; }
+
+.container { 
+  padding: 2.5rem 2rem; 
+  max-width: 1400px; 
+  margin: auto; 
+}
+
+h2 {
+  color: #2c3e50;
+  margin-bottom: 2rem;
+  font-size: 1.5rem;
+}
+
+.filter-bar {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.filter-bar span {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.filter-bar a {
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.filter-bar a.active {
+  background: #E74C3C;
+  color: white;
+}
+
+.filter-bar a.inactive {
+  background: #ecf0f1;
+  color: #2c3e50;
+}
+
+.filter-bar a:hover {
+  transform: translateY(-2px);
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border-left: 4px solid;
+  text-align: center;
+}
+
+.stat-card.green { border-left-color: #27AE60; }
+.stat-card.blue { border-left-color: #2980B9; }
+.stat-card.orange { border-left-color: #E67E22; }
+.stat-card.red { border-left-color: #E74C3C; }
+.stat-card.purple { border-left-color: #8E44AD; }
+.stat-card.teal { border-left-color: #16A085; }
+
+.stat-card .number {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.stat-card.green .number { color: #27AE60; }
+.stat-card.blue .number { color: #2980B9; }
+.stat-card.orange .number { color: #E67E22; }
+.stat-card.red .number { color: #E74C3C; }
+.stat-card.purple .number { color: #8E44AD; }
+.stat-card.teal .number { color: #16A085; }
+
+.stat-card .label {
+  color: #7f8c8d;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Charts Grid */
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.chart-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.chart-card h3 {
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 0.8rem;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+/* Success Rate Section */
+.success-rate {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.success-rate .number {
+  font-size: 3.5rem;
+  font-weight: bold;
+  color: #27AE60;
+  margin-bottom: 0.5rem;
+}
+
+.success-rate .label {
+  color: #7f8c8d;
+  font-size: 1.1rem;
+}
+
+/* Table */
+.table-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  overflow-x: auto;
+  margin-bottom: 2rem;
+}
+
+.table-card h3 {
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th {
+  background: #f8f9fa;
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: #2c3e50;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+table td {
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid #e0e0e0;
+  color: #555;
+}
+
+table tr:hover {
+  background: #f8f9fa;
+}
+
+@media (max-width: 768px) {
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .filter-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="navbar">
+  <a href="/dashboard/" title="Back to Dashboard">
+    <i class="fas fa-arrow-left"></i> Back to Dashboard
+  </a>
+  <span style="font-weight: 600; color: #1a237e;">🎯 Success Analytics Dashboard</span>
+  <div></div>
+</div>
+
+<div class="container">
+  <h2><i class="fas fa-chart-line"></i> Success Analytics Dashboard</h2>
+  
+  <!-- Year Filter -->
+  <div class="filter-bar">
+    <span>📅 Filter by Year:</span>
+    <a href="/success-analytics/?year=all" class="{% if selected_year == 'all' %}active{% else %}inactive{% endif %}">
+      All Years
+    </a>
+    {% for year in all_years %}
+    <a href="/success-analytics/?year={{ year }}" class="{% if year == selected_year %}active{% else %}inactive{% endif %}">
+      {{ year }}
+    </a>
+    {% endfor %}
+    <span style="margin-left: auto; color: #7f8c8d;">Showing data for <b>{{ selected_year }}</b></span>
+  </div>
+
+  <!-- Overall Success Rate -->
+  <div class="success-rate">
+    <div class="number">{{ success_rate }}%</div>
+    <div class="label">Overall Success Rate</div>
+  </div>
+
+  <!-- Main Stats -->
+  <div class="stats-grid">
+    <div class="stat-card blue">
+      <div class="number">{{ total }}</div>
+      <div class="label">Total Students</div>
+    </div>
+    <div class="stat-card green">
+      <div class="number">{{ placed }}</div>
+      <div class="label">Placed</div>
+    </div>
+    <div class="stat-card purple">
+      <div class="number">{{ higher }}</div>
+      <div class="label">Higher Studies</div>
+    </div>
+    <div class="stat-card orange">
+      <div class="number">{{ still_looking }}</div>
+      <div class="label">Still Looking</div>
+    </div>
+  </div>
+
+  <!-- Enrollment Stats -->
+  <div class="stats-grid">
+    <div class="stat-card teal">
+      <div class="number">{{ enrolled }}</div>
+      <div class="label">Enrolled</div>
+    </div>
+    <div class="stat-card green">
+      <div class="number">{{ active }}</div>
+      <div class="label">Active</div>
+    </div>
+    <div class="stat-card red">
+      <div class="number">{{ at_risk }}</div>
+      <div class="label">At Risk</div>
+    </div>
+    <div class="stat-card orange">
+      <div class="number">{{ supply }}</div>
+      <div class="label">Supply</div>
+    </div>
+    <div class="stat-card blue">
+      <div class="number">{{ cleared }}</div>
+      <div class="label">Cleared</div>
+    </div>
+    <div class="stat-card purple">
+      <div class="number">{{ career_ready }}</div>
+      <div class="label">Career Ready</div>
+    </div>
+    <div class="stat-card green">
+      <div class="number">{{ graduated }}</div>
+      <div class="label">Graduated</div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="charts-grid">
+    <div class="chart-card">
+      <h3>📊 Career Path Distribution</h3>
+      <canvas id="careerChart"></canvas>
+    </div>
+    
+    <div class="chart-card">
+      <h3>🎓 Degree vs PG Students</h3>
+      <canvas id="degreeChart"></canvas>
+    </div>
+
+    <div class="chart-card full-width">
+      <h3>📈 Yearly Success Trends</h3>
+      <canvas id="yearChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Year-wise Details Table -->
+  <div class="table-card">
+    <h3>📋 Year-wise Breakdown</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Academic Year</th>
+          <th>Total Students</th>
+          <th>Placed</th>
+          <th>Higher Studies</th>
+          <th>Success Rate</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for year in year_data %}
+        <tr>
+          <td><strong>{{ year.year }}</strong></td>
+          <td>{{ year.total }}</td>
+          <td>{{ year.placed }}</td>
+          <td>{{ year.higher }}</td>
+          <td><strong style="color: #27AE60;">{{ year.success_rate }}%</strong></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Degree vs PG Details -->
+  <div class="stats-grid">
+    <div class="stat-card blue">
+      <div class="number">{{ degree_total }}</div>
+      <div class="label">Degree Students</div>
+    </div>
+    <div class="stat-card green">
+      <div class="number">{{ degree_placed }}</div>
+      <div class="label">Degree Placed</div>
+    </div>
+    <div class="stat-card purple">
+      <div class="number">{{ pg_total }}</div>
+      <div class="label">PG Students</div>
+    </div>
+    <div class="stat-card green">
+      <div class="number">{{ pg_placed }}</div>
+      <div class="label">PG Placed</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Career Path Distribution
+new Chart(document.getElementById('careerChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Placed', 'Higher Studies', 'Still Looking'],
+    datasets: [{
+      data: [{{ placed }}, {{ higher }}, {{ still_looking }}],
+      backgroundColor: ['#27AE60', '#8E44AD', '#E67E22'],
+      borderWidth: 2,
+      borderColor: '#fff'
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { position: 'bottom' }
+    }
+  }
+});
+
+// Degree vs PG
+new Chart(document.getElementById('degreeChart'), {
+  type: 'pie',
+  data: {
+    labels: ['Degree ({{ degree_total }})', 'PG ({{ pg_total }})'],
+    datasets: [{
+      data: [{{ degree_total }}, {{ pg_total }}],
+      backgroundColor: ['#2980B9', '#8E44AD'],
+      borderWidth: 2,
+      borderColor: '#fff'
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { position: 'bottom' }
+    }
+  }
+});
+
+// Year-wise Trends
+new Chart(document.getElementById('yearChart'), {
+  type: 'line',
+  data: {
+    labels: [{% for y in year_data %}'{{ y.year }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+    datasets: [
+      {
+        label: 'Success Rate (%)',
+        data: [{% for y in year_data %}{{ y.success_rate }}{% if not forloop.last %},{% endif %}{% endfor %}],
+        borderColor: '#27AE60',
+        backgroundColor: 'rgba(39, 174, 96, 0.1)',
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: '#27AE60',
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2,
+        pointRadius: 6
+      },
+      {
+        label: 'Placed',
+        data: [{% for y in year_data %}{{ y.placed }}{% if not forloop.last %},{% endif %}{% endfor %}],
+        borderColor: '#2980B9',
+        backgroundColor: 'rgba(41, 128, 185, 0.1)',
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: '#2980B9',
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2,
+        pointRadius: 6
+      },
+      {
+        label: 'Higher Studies',
+        data: [{% for y in year_data %}{{ y.higher }}{% if not forloop.last %},{% endif %}{% endfor %}],
+        borderColor: '#8E44AD',
+        backgroundColor: 'rgba(142, 68, 173, 0.1)',
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: '#8E44AD',
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2,
+        pointRadius: 6
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { position: 'bottom' }
+    },
+    scales: {
+      y: {
+        beginAtZero: true
+      }
+    }
+  }
+});
+</script>
+
+</body>
+</html>

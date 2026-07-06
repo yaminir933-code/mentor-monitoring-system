@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Academic Guidance</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:Arial;background:#f0f2f5;}
+.navbar{background:#1976D2;padding:1rem 2rem;color:white;display:flex;justify-content:space-between;align-items:center;}
+.navbar a{color:white;text-decoration:none;}
+.container{padding:2rem;max-width:1100px;margin:auto;}
+h2{color:#333;margin-bottom:1.5rem;}
+
+/* Year filter */
+.year-filter{background:white;padding:1rem 1.5rem;border-radius:12px;margin-bottom:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.1);display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.year-btn{padding:7px 18px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;background:#e3f2fd;color:#1565c0;}
+.year-btn.active{background:#1976D2;color:white;}
+
+/* Student cards */
+.student-card{background:white;border-radius:12px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.1);margin-bottom:1rem;border-left:4px solid #1976D2;}
+.student-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+.student-info h3{color:#1976D2;margin-bottom:4px;}
+.student-info p{color:#777;font-size:14px;}
+.student-stats{display:flex;gap:10px;margin-bottom:12px;}
+.stat-pill{padding:4px 12px;border-radius:20px;font-size:12px;font-weight:bold;}
+.stat-marks{background:#e3f2fd;color:#1565c0;}
+.stat-att-good{background:#e8f5e9;color:#2e7d32;}
+.stat-att-bad{background:#fdf0f0;color:#c0392b;}
+.stat-pass{background:#e8f5e9;color:#2e7d32;}
+.stat-fail{background:#fdf0f0;color:#c0392b;}
+.badge-degree{background:#e3f2fd;color:#1565c0;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:bold;}
+.badge-pg{background:#f3e5f5;color:#6a1b9a;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:bold;}
+.sem-buttons{display:flex;flex-wrap:wrap;gap:8px;}
+.sem-btn{padding:8px 18px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:bold;background:#1976D2;color:white;}
+.sem-btn:hover{background:#1256a0;}
+.sem-btn.project{background:#e53935;}
+.empty{text-align:center;padding:3rem;color:#999;background:white;border-radius:12px;}
+</style>
+</head>
+<body>
+<div class="navbar">
+  <span>🎓 MentorApp</span>
+  <a href="/dashboard">← Back to Dashboard</a>
+</div>
+<div class="container">
+  <h2>📚 Academic Guidance</h2>
+
+  <!-- Student Cards -->
+  {% for item in student_data %}
+  <div class="student-card">
+    <div class="student-top">
+      <div class="student-info">
+        <h3>{{ item.student.name }}</h3>
+        <p>{{ item.student.department }} | Roll: {{ item.student.roll_number }} | {{ item.student.academic_year }}</p>
+      </div>
+      <div>
+        {% if item.student.graduation == 'PG' %}
+          <span class="badge-pg">PG</span>
+        {% else %}
+          <span class="badge-degree">Degree</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Stats Pills -->
+    <div class="student-stats">
+      <span class="stat-pill stat-marks">📊 Avg Marks: {{ item.avg_marks }}</span>
+      {% if item.avg_attendance >= 75 %}
+        <span class="stat-pill stat-att-good">📅 Attendance: {{ item.avg_attendance }}% ✅</span>
+      {% else %}
+        <span class="stat-pill stat-att-bad">📅 Attendance: {{ item.avg_attendance }}% ⚠️</span>
+      {% endif %}
+      <span class="stat-pill stat-pass">✅ Pass: {{ item.total_pass }}</span>
+      {% if item.total_fail > 0 %}
+        <span class="stat-pill stat-fail">❌ Fail: {{ item.total_fail }}</span>
+      {% endif %}
+    </div>
+
+    <!-- Semester Buttons -->
+    <div class="sem-buttons">
+      {% if item.student.graduation == 'PG' %}
+        <a href="/academic/semester/{{ item.student.id }}/1/" class="sem-btn">Sem 1</a>
+        <a href="/academic/semester/{{ item.student.id }}/2/" class="sem-btn">Sem 2</a>
+        <a href="/academic/semester/{{ item.student.id }}/3/" class="sem-btn">Sem 3</a>
+        <a href="/academic/semester/{{ item.student.id }}/4/" class="sem-btn project">Sem 4 🎯 Project</a>
+      {% else %}
+        <a href="/academic/semester/{{ item.student.id }}/1/" class="sem-btn">Sem 1</a>
+        <a href="/academic/semester/{{ item.student.id }}/2/" class="sem-btn">Sem 2</a>
+        <a href="/academic/semester/{{ item.student.id }}/3/" class="sem-btn">Sem 3</a>
+        <a href="/academic/semester/{{ item.student.id }}/4/" class="sem-btn">Sem 4</a>
+        <a href="/academic/semester/{{ item.student.id }}/5/" class="sem-btn">Sem 5</a>
+        <a href="/academic/semester/{{ item.student.id }}/6/" class="sem-btn project">Sem 6 🎯 Project</a>
+      {% endif %}
+    </div>
+  </div>
+  {% empty %}
+  <div class="empty">No students found. Please add students first.</div>
+  {% endfor %}
+</div>
+
+<script>
+// Charts removed
+</script>
+</body>
+</html>

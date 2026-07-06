@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Student Journey Pipeline</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:Arial;background:#f0f2f5;}
+.navbar{background:#1a237e;padding:1rem 2rem;color:white;display:flex;justify-content:space-between;align-items:center;}
+.navbar a{color:white;text-decoration:none;}
+.container{padding:2rem;max-width:1200px;margin:auto;}
+h2{color:#1a237e;margin-bottom:1.5rem;font-size:24px;}
+
+/* Pipeline stages */
+.pipeline{display:flex;align-items:center;margin-bottom:2rem;overflow-x:auto;padding:1rem 0;}
+.stage-box{min-width:130px;text-align:center;position:relative;}
+.stage-circle{width:70px;height:70px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;font-size:24px;border:3px solid white;box-shadow:0 4px 12px rgba(0,0,0,0.2);}
+.stage-name{font-size:11px;font-weight:bold;color:#333;}
+.stage-count{font-size:20px;font-weight:bold;margin-top:4px;}
+.arrow{font-size:24px;color:#999;margin:0 5px;margin-bottom:30px;}
+
+/* Colors for each stage */
+.s-enrolled{background:#42A5F5;}
+.s-active{background:#66BB6A;}
+.s-at_risk{background:#FFA726;}
+.s-supply{background:#EF5350;}
+.s-cleared{background:#26C6DA;}
+.s-career_ready{background:#AB47BC;}
+.s-graduated{background:#F9A825;}
+
+/* Charts */
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem;}
+.chart-card{background:white;border-radius:12px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+.chart-card h3{color:#333;margin-bottom:1rem;font-size:15px;border-bottom:2px solid #f0f0f0;padding-bottom:8px;}
+
+/* Student table per stage */
+.stage-section{background:white;border-radius:12px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.1);margin-bottom:1.5rem;}
+.stage-header{display:flex;align-items:center;gap:12px;margin-bottom:1rem;}
+.stage-badge{padding:5px 14px;border-radius:20px;color:white;font-size:13px;font-weight:bold;}
+table{width:100%;border-collapse:collapse;}
+th{padding:10px 12px;text-align:left;font-size:13px;background:#f5f5f5;color:#333;}
+td{padding:10px 12px;border-bottom:1px solid #f0f0f0;font-size:13px;color:#555;}
+tr:last-child td{border-bottom:none;}
+.btn-stage{padding:4px 10px;border:none;border-radius:6px;cursor:pointer;font-size:12px;color:white;}
+.empty{color:#999;text-align:center;padding:1rem;}
+</style>
+</head>
+<body>
+<div class="navbar">
+  <span>🎓 MentorApp — Student Journey Pipeline</span>
+  <a href="/students/">← Back to Students</a>
+</div>
+<div class="container">
+  <h2>📊 Student Success Pipeline (Supply Chain)</h2>
+
+  <!-- Pipeline Visual -->
+  <div style="background:white;border-radius:12px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.1);margin-bottom:2rem;">
+    <h3 style="color:#333;margin-bottom:1rem;font-size:15px;">🔄 Student Journey Flow</h3>
+    <div class="pipeline">
+      {% for stage in stages %}
+      <div class="stage-box">
+        <div class="stage-circle s-{{ stage.key }}">{{ stage.icon }}</div>
+        <div class="stage-name">{{ stage.name }}</div>
+        <div class="stage-count" style="color:{{ stage.color }};">{{ stage.count }}</div>
+      </div>
+      {% if not forloop.last %}<div class="arrow">→</div>{% endif %}
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="charts-row">
+    <div class="chart-card">
+      <h3>📊 Students at Each Stage</h3>
+      <canvas id="funnelChart"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>🎓 Degree vs PG in Pipeline</h3>
+      <canvas id="gradChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Students by Stage -->
+  {% for stage in stages %}
+  {% if stage.students %}
+  <div class="stage-section">
+    <div class="stage-header">
+      <span class="stage-badge" style="background:{{ stage.color }};">{{ stage.icon }} {{ stage.name }}</span>
+      <span style="color:#777;font-size:13px;">{{ stage.count }} student(s)</span>
+    </div>
+    <table>
+      <tr><th>Name</th><th>Roll No</th><th>Department</th><th>Graduation</th><th>Update Stage</th></tr>
+      {% for student in stage.students %}
+      <tr>
+        <td>{{ student.name }}</td>
+        <td>{{ student.roll_number }}</td>
+        <td>{{ student.department }}</td>
+        <td>{{ student.graduation }}</td>
+        <td>
+          <form method="POST" action="/students/update-stage/{{ student.id }}/" style="display:inline;">
+            {% csrf_token %}
+            <select name="stage" onchange="this.form.submit()" style="padding:4px;border:1px solid #ddd;border-radius:4px;font-size:12px;">
+              <option value="enrolled" {% if student.stage == 'enrolled' %}selected{% endif %}>Enrolled</option>
+              <option value="active" {% if student.stage == 'active' %}selected{% endif %}>Active</option>
+              <option value="at_risk" {% if student.stage == 'at_risk' %}selected{% endif %}>At Risk</option>
+              <option value="supply" {% if student.stage == 'supply' %}selected{% endif %}>Supply/Arrear</option>
+              <option value="cleared" {% if student.stage == 'cleared' %}selected{% endif %}>Cleared</option>
+              <option value="career_ready" {% if student.stage == 'career_ready' %}selected{% endif %}>Career Ready</option>
+              <option value="graduated" {% if student.stage == 'graduated' %}selected{% endif %}>Graduated</option>
+            </select>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+  {% endif %}
+  {% endfor %}
+</div>
+
+<script>
+new Chart(document.getElementById('funnelChart'), {
+  type: 'bar',
+  data: {
+    labels: [{% for s in stages %}'{{ s.name }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+    datasets: [{
+      label: 'Students',
+      data: [{% for s in stages %}{{ s.count }}{% if not forloop.last %},{% endif %}{% endfor %}],
+      backgroundColor: ['#42A5F5','#66BB6A','#FFA726','#EF5350','#26C6DA','#AB47BC','#F9A825'],
+      borderRadius: 6,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+  }
+});
+
+new Chart(document.getElementById('gradChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Degree', 'PG'],
+    datasets: [{
+      data: [{{ total_degree }}, {{ total_pg }}],
+      backgroundColor: ['#1976D2', '#9C27B0'],
+    }]
+  },
+  options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+});
+</script>
+</body>
+</html>

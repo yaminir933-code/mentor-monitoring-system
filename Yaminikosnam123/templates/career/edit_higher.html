@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Edit Higher Studies</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:Arial;background:#f0f2f5;}
+.navbar{background:#9C27B0;padding:1rem 2rem;color:white;display:flex;justify-content:space-between;align-items:center;}
+.navbar a{color:white;text-decoration:none;}
+.container{padding:2rem;max-width:700px;margin:auto;}
+.card{background:white;border-radius:12px;padding:2rem;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+h2{color:#333;margin-bottom:1.5rem;border-bottom:2px solid #9C27B0;padding-bottom:8px;}
+.form-group{margin-bottom:1rem;}
+label{display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:#555;}
+input,select,textarea{width:100%;padding:10px;border:1px solid #ddd;border-radius:6px;font-size:14px;}
+textarea{height:80px;}
+.btn-submit{background:#9C27B0;color:white;padding:12px 30px;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;width:100%;margin-top:10px;}
+.btn-cancel{display:block;text-align:center;margin-top:10px;color:#9C27B0;text-decoration:none;}
+</style>
+</head>
+<body>
+<div class="navbar">
+  <span>🎓 MentorApp</span>
+  <a href="/career/profile/{{ record.profile.student.id }}">← Back</a>
+</div>
+<div class="container">
+<div class="card">
+<h2>✏️ Edit Higher Studies Record</h2>
+<form method="POST">
+{% csrf_token %}
+<div class="form-group">
+<label>Goal Type</label>
+<select name="goal_type">
+<option value="PG" {% if record.goal_type == 'PG' %}selected{% endif %}>PG</option>
+<option value="PhD" {% if record.goal_type == 'PhD' %}selected{% endif %}>PhD</option>
+<option value="MBA" {% if record.goal_type == 'MBA' %}selected{% endif %}>MBA</option>
+<option value="Other" {% if record.goal_type == 'Other' %}selected{% endif %}>Other</option>
+</select>
+</div>
+<div class="form-group">
+<label>Interest Area</label>
+<input type="text" name="interest_area" value="{{ record.interest_area }}" required/>
+</div>
+<div class="form-group">
+<label>Target Institution</label>
+<input type="text" name="target_institution" value="{{ record.target_institution }}"/>
+</div>
+<div class="form-group">
+<label>Preparation Level (%)</label>
+<input type="number" name="preparation_level" value="{{ record.preparation_level }}" min="0" max="100"/>
+</div>
+<div class="form-group">
+<label>Progress Status</label>
+<select name="progress_status">
+<option value="Planning" {% if record.progress_status == 'Planning' %}selected{% endif %}>Planning</option>
+<option value="Preparing" {% if record.progress_status == 'Preparing' %}selected{% endif %}>Preparing</option>
+<option value="Applied" {% if record.progress_status == 'Applied' %}selected{% endif %}>Applied</option>
+<option value="Admitted" {% if record.progress_status == 'Admitted' %}selected{% endif %}>Admitted</option>
+</select>
+</div>
+<div class="form-group">
+<label>Exam Score</label>
+<input type="text" name="exam_score" value="{{ record.exam_score }}"/>
+</div>
+<div class="form-group">
+<label>Guidance Plan</label>
+<textarea name="guidance_plan">{{ record.guidance_plan }}</textarea>
+</div>
+<div class="form-group">
+<label>Resources Provided</label>
+<textarea name="resources_provided">{{ record.resources_provided }}</textarea>
+</div>
+<button type="submit" class="btn-submit">💾 Save Changes</button>
+<a href="/career/profile/{{ record.profile.student.id }}" class="btn-cancel">Cancel</a>
+</form>
+</div>
+</div>
+</body>
+</html>

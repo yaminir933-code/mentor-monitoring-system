@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Edit Academic Record</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: Arial; background: #f0f2f5; }
+.navbar { background: #1976D2; padding: 1rem 2rem; color: white; display: flex; justify-content: space-between; align-items: center; }
+.navbar a { color: white; text-decoration: none; }
+.container { padding: 2rem; max-width: 700px; margin: auto; }
+.form-card { background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+.form-title { color: #1976D2; font-size: 1.4rem; margin-bottom: 0.3rem; }
+.form-subtitle { color: #777; font-size: 0.9rem; margin-bottom: 2rem; }
+.section-title { color: #1976D2; font-weight: bold; margin: 1.5rem 0 1rem; border-bottom: 2px solid #e3f2fd; padding-bottom: 0.5rem; }
+.form-group { margin-bottom: 1.2rem; }
+label { display: block; color: #555; font-weight: bold; margin-bottom: 0.4rem; font-size: 0.9rem; }
+input, select, textarea { width: 100%; padding: 10px 14px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.95rem; font-family: Arial; }
+input:focus, select:focus, textarea:focus { outline: none; border-color: #1976D2; }
+textarea { height: 90px; resize: vertical; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
+.btn-save { background: #1976D2; color: white; padding: 12px; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; }
+.btn-cancel { background: #757575; color: white; padding: 12px; border-radius: 8px; text-decoration: none; text-align: center; font-size: 1rem; }
+.error { background: #ffebee; color: #c62828; padding: 0.8rem; border-radius: 8px; margin-bottom: 1rem; }
+.success { background: #e8f5e9; color: #2e7d32; padding: 0.8rem; border-radius: 8px; margin-bottom: 1rem; }
+.result-pass { color: #4CAF50; font-weight: bold; }
+.result-fail { color: #e53935; font-weight: bold; }
+</style>
+</head>
+<body>
+<div class="navbar">
+  <span>🎓 MentorApp</span>
+  <a href="/academic/view/{{ record.student.id }}">← Back</a>
+</div>
+<div class="container">
+  <div class="form-card">
+    <div class="form-title">✏️ Edit Academic Record</div>
+    <div class="form-subtitle">Student: <b>{{ record.student.name }}</b> | {{ record.student.department }}</div>
+
+    {% if error %}<div class="error">⚠️ {{ error }}</div>{% endif %}
+    {% if success %}
+    <div class="success">✅ {{ success }} — <a href="/academic/view/{{ record.student.id }}">View All Records</a></div>
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="section-title">📚 Subject Details</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>📅 Semester</label>
+          <select name="semester">
+            <option {% if record.semester == 'Semester 1' %}selected{% endif %}>Semester 1</option>
+            <option {% if record.semester == 'Semester 2' %}selected{% endif %}>Semester 2</option>
+            <option {% if record.semester == 'Semester 3' %}selected{% endif %}>Semester 3</option>
+            <option {% if record.semester == 'Semester 4' %}selected{% endif %}>Semester 4</option>
+            <option {% if record.semester == 'Semester 5' %}selected{% endif %}>Semester 5</option>
+            <option {% if record.semester == 'Semester 6' %}selected{% endif %}>Semester 6</option>
+            <option {% if record.semester == 'Semester 7' %}selected{% endif %}>Semester 7</option>
+            <option {% if record.semester == 'Semester 8' %}selected{% endif %}>Semester 8</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>📖 Subject</label>
+          <input type="text" name="subject" value="{{ record.subject }}" required>
+        </div>
+      </div>
+
+      <div class="section-title">📊 Marks</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Internal Marks (0-50)</label>
+          <input type="number" name="internal_marks" value="{{ record.internal_marks }}" min="0" max="50" required>
+        </div>
+        <div class="form-group">
+          <label>External Marks (0-50)</label>
+          <input type="number" name="external_marks" value="{{ record.external_marks }}" min="0" max="50" required>
+        </div>
+      </div>
+      <p style="color:#777; font-size:0.9rem; margin-bottom:1rem;">
+        Current Total: <b>{{ record.total_marks }}</b> — 
+        {% if record.result == 'Pass' %}<span class="result-pass">✅ Pass</span>
+        {% else %}<span class="result-fail">❌ Fail</span>{% endif %}
+      </p>
+
+      <div class="section-title">📅 Attendance</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Total Classes</label>
+          <input type="number" name="total_classes" value="{{ record.total_classes }}" min="0">
+        </div>
+        <div class="form-group">
+          <label>Attended Classes</label>
+          <input type="number" name="attended_classes" value="{{ record.attended_classes }}" min="0">
+        </div>
+      </div>
+
+      <div class="section-title">📝 Guidance</div>
+      <div class="form-group">
+        <label>Guidance Notes</label>
+        <textarea name="guidance_notes">{{ record.guidance_notes }}</textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-save" type="submit">💾 Update Record</button>
+        <a class="btn-cancel" href="/academic/view/{{ record.student.id }}">✖ Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Edit Placement</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:Arial;background:#f0f2f5;}
+.navbar{background:#9C27B0;padding:1rem 2rem;color:white;display:flex;justify-content:space-between;align-items:center;}
+.navbar a{color:white;text-decoration:none;}
+.container{padding:2rem;max-width:700px;margin:auto;}
+.card{background:white;border-radius:12px;padding:2rem;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+h2{color:#333;margin-bottom:1.5rem;border-bottom:2px solid #9C27B0;padding-bottom:8px;}
+.form-group{margin-bottom:1rem;}
+label{display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:#555;}
+input,select,textarea{width:100%;padding:10px;border:1px solid #ddd;border-radius:6px;font-size:14px;}
+textarea{height:80px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.btn-submit{background:#9C27B0;color:white;padding:12px 30px;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;width:100%;margin-top:10px;}
+.btn-cancel{display:block;text-align:center;margin-top:10px;color:#9C27B0;text-decoration:none;}
+</style>
+</head>
+<body>
+<div class="navbar">
+  <span>🎓 MentorApp</span>
+  <a href="/career/profile/{{ record.profile.student.id }}">← Back</a>
+</div>
+<div class="container">
+<div class="card">
+<h2>✏️ Edit Placement Record</h2>
+<form method="POST">
+{% csrf_token %}
+<div class="form-group">
+<label>Placement Status</label>
+<select name="placement_status">
+<option value="Still Looking" {% if record.placement_status == 'Still Looking' %}selected{% endif %}>Still Looking</option>
+<option value="Placed" {% if record.placement_status == 'Placed' %}selected{% endif %}>Placed</option>
+<option value="Not Interested" {% if record.placement_status == 'Not Interested' %}selected{% endif %}>Not Interested</option>
+</select>
+</div>
+<div class="form-row">
+<div class="form-group">
+<label>Placement Office Visits</label>
+<input type="number" name="placement_office_visits" value="{{ record.placement_office_visits }}"/>
+</div>
+<div class="form-group">
+<label>Interviews Attended</label>
+<input type="number" name="interviews_attended" value="{{ record.interviews_attended }}"/>
+</div>
+</div>
+<div class="form-group">
+<label>Interviews Cleared</label>
+<input type="number" name="interviews_cleared" value="{{ record.interviews_cleared }}"/>
+</div>
+<div class="form-row">
+<div class="form-group">
+<label>Company Name</label>
+<input type="text" name="company_name" value="{{ record.company_name }}"/>
+</div>
+<div class="form-group">
+<label>Job Role</label>
+<input type="text" name="job_role" value="{{ record.job_role }}"/>
+</div>
+</div>
+<div class="form-row">
+<div class="form-group">
+<label>Salary</label>
+<input type="text" name="salary" value="{{ record.salary }}"/>
+</div>
+<div class="form-group">
+<label>Job Location</label>
+<input type="text" name="job_location" value="{{ record.job_location }}"/>
+</div>
+</div>
+<div class="form-group">
+<label>Guidance Notes</label>
+<textarea name="guidance_notes">{{ record.guidance_notes }}</textarea>
+</div>
+<button type="submit" class="btn-submit">💾 Save Changes</button>
+<a href="/career/profile/{{ record.profile.student.id }}" class="btn-cancel">Cancel</a>
+</form>
+</div>
+</div>
+</body>
+</html>

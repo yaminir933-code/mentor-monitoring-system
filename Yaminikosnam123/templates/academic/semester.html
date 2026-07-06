@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Semester {{ sem_number }} - {{ student.name }}</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:Arial;background:#f0f2f5;}
+.navbar{background:#1976D2;padding:1rem 2rem;color:white;display:flex;justify-content:space-between;align-items:center;}
+.navbar a{color:white;text-decoration:none;}
+.container{padding:2rem;max-width:1100px;margin:auto;}
+.student-info{background:white;padding:1rem 1.5rem;border-radius:12px;margin-bottom:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.1);border-left:4px solid #1976D2;}
+.student-info h2{color:#1976D2;}
+.student-info p{color:#777;font-size:14px;}
+.section{background:white;border-radius:12px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.1);margin-bottom:1.5rem;}
+.section h3{color:#333;margin-bottom:1rem;border-bottom:2px solid #1976D2;padding-bottom:8px;}
+.form-row{display:flex;gap:10px;align-items:center;margin-bottom:10px;flex-wrap:wrap;}
+input,select,textarea{padding:9px 12px;border:1px solid #ddd;border-radius:6px;font-size:14px;}
+.btn-blue{background:#1976D2;color:white;padding:9px 18px;border:none;border-radius:6px;cursor:pointer;text-decoration:none;font-size:14px;}
+.btn-green{background:#4CAF50;color:white;padding:9px 18px;border:none;border-radius:6px;cursor:pointer;font-size:14px;}
+.btn-red{background:#e53935;color:white;padding:5px 12px;border:none;border-radius:6px;cursor:pointer;text-decoration:none;font-size:13px;}
+.btn-orange{background:#FF9800;color:white;padding:5px 12px;border:none;border-radius:6px;cursor:pointer;text-decoration:none;font-size:13px;}
+table{width:100%;border-collapse:collapse;}
+th{background:#1976D2;color:white;padding:10px 12px;text-align:left;font-size:13px;}
+td{padding:10px 12px;border-bottom:1px solid #f0f0f0;font-size:14px;}
+tr:hover td{background:#f9f9f9;}
+.pass{color:#4CAF50;font-weight:bold;}
+.fail{color:#e53935;font-weight:bold;}
+.total-box{background:#e3f2fd;padding:1rem 1.5rem;border-radius:8px;font-size:16px;font-weight:bold;color:#1565c0;margin-top:1rem;}
+.subject-tag{display:inline-flex;align-items:center;gap:6px;background:#e3f2fd;color:#1565c0;padding:5px 12px;border-radius:20px;font-size:13px;margin:4px;}
+.empty{text-align:center;padding:2rem;color:#999;}
+.project-box{background:#fff3e0;border:2px dashed #FF9800;border-radius:12px;padding:1.5rem;}
+.project-box h3{color:#E65100;margin-bottom:1rem;}
+select[multiple] {
+  appearance: none;
+  background-color: white;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+}
+select[multiple]:focus {
+  outline: none;
+  border-color: #1976D2;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+}
+select[multiple] option {
+  padding: 8px;
+  line-height: 1.5;
+  cursor: pointer;
+}
+select[multiple] option:checked {
+  background: linear-gradient(#1976D2, #1976D2);
+  background-color: #1976D2;
+  color: white;
+}
+.checkbox-dropdown {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+.checkbox-dropdown-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  background: white;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+  user-select: none;
+}
+.checkbox-dropdown-toggle:hover {
+  border-color: #1976D2;
+}
+.checkbox-dropdown-toggle.active {
+  border-color: #1976D2;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+}
+.checkbox-dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 2px solid #ddd;
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.checkbox-dropdown-menu.active {
+  display: block;
+}
+.checkbox-dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.checkbox-dropdown-item:hover {
+  background: #f5f5f5;
+}
+.checkbox-dropdown-item:last-child {
+  border-bottom: none;
+}
+.checkbox-dropdown-item input[type="checkbox"] {
+  margin-right: 10px;
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+}
+.checkbox-dropdown-item label {
+  margin: 0;
+  cursor: pointer;
+  flex: 1;
+}
+.checkbox-dropdown-selected {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+  min-height: 24px;
+}
+.checkbox-dropdown-selected span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #e3f2fd;
+  color: #1565c0;
+  padding: 4px 10px;
+  border-radius: 14px;
+  font-size: 13px;
+}
+.marks-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.marks-form-field {
+  display: flex;
+  flex-direction: column;
+}
+.marks-form-field label {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+.marks-form-field input, .marks-form-field select {
+  padding: 9px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+.marks-form-field input:focus, .marks-form-field select:focus {
+  outline: none;
+  border-color: #1976D2;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+}
+</style>
+</head>
+<body>
+<div class="navbar">
+  <span>🎓 MentorApp</span>
+  <a href="/academic/">← Back to Academic</a>
+</div>
+<div class="container">
+
+  <div class="student-info">
+    <h2>{{ student.name }} — Semester {{ sem_number }}</h2>
+    <p>{{ student.department }} | Roll: {{ student.roll_number }} |
+    {% if student.graduation == 'PG' %}🟣 Post Graduation (PG){% else %}🔵 Degree{% endif %}</p>
+  </div>
+
+  <!-- SUBJECTS SECTION -->
+  <div class="section">
+    <h3>📚 Subjects</h3>
+    <form method="POST" action="/academic/add-subject/{{ student.id }}/{{ sem_number }}/" id="subjectForm">
+      {% csrf_token %}
+      <div style="margin-bottom: 15px;">
+        <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">Select Subjects for Semester {{ sem_number }}:</label>
+        <div class="checkbox-dropdown">
+          <div class="checkbox-dropdown-toggle" id="dropdownToggle">
+            <span id="dropdownText">Select subjects...</span>
+            <span style="font-size: 12px; color: #999;">▼</span>
+          </div>
+          <div class="checkbox-dropdown-menu" id="dropdownMenu">
+            <div style="padding: 10px; border-bottom: 1px solid #ddd; background: #f9f9f9;">
+              <input type="text" id="subjectSearch" placeholder="Search subjects..." style="width: 100%; padding: 6px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px;">
+            </div>
+            <div id="checkboxContainer"></div>
+          </div>
+        </div>
+        <div class="checkbox-dropdown-selected" id="selectedSubjects"></div>
+      </div>
+      <button type="submit" class="btn-green" id="submitBtn">+ Add Selected Subjects</button>
+    </form>
+    <div style="margin-top:15px;">
+      <h4 style="color:#666; font-size:14px; margin-bottom:8px;">Added Subjects:</h4>
+      <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+        {% for subject in subjects %}
+        <span class="subject-tag">
+          {{ subject.name }}
+          <a href="/academic/delete-subject/{{ subject.id }}/" class="btn-red" style="padding:2px 8px;font-size:11px;">✕</a>
+        </span>
+        {% empty %}
+        <p style="color:#999;font-size:14px;">No subjects added yet.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <script>
+  // Checkbox Dropdown Logic
+  const dropdownToggle = document.getElementById('dropdownToggle');
+  const dropdownMenu = document.getElementById('dropdownMenu');
+  const checkboxContainer = document.getElementById('checkboxContainer');
+  const subjectSearch = document.getElementById('subjectSearch');
+  const selectedSubjectsDiv = document.getElementById('selectedSubjects');
+  const submitBtn = document.getElementById('submitBtn');
+  const subjectForm = document.getElementById('subjectForm');
+  
+  let allSubjects = [];
+  let selectedSubjects = new Set();
+
+  // Toggle dropdown
+  dropdownToggle.addEventListener('click', function(e) {
+    e.stopPropagation();
+    dropdownMenu.classList.toggle('active');
+    dropdownToggle.classList.toggle('active');
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.checkbox-dropdown')) {
+      dropdownMenu.classList.remove('active');
+      dropdownToggle.classList.remove('active');
+    }
+  });
+
+  // Search functionality
+  subjectSearch.addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const items = checkboxContainer.querySelectorAll('.checkbox-dropdown-item');
+    items.forEach(item => {
+      const text = item.textContent.toLowerCase();
+      item.style.display = text.includes(searchTerm) ? 'flex' : 'none';
+    });
+  });
+
+  // Fetch available subjects
+  document.addEventListener('DOMContentLoaded', function() {
+    const studentId = {{ student.id }};
+    const semNumber = {{ sem_number }};
+
+    fetch(`/academic/get-subjects/${studentId}/${semNumber}/`)
+      .then(response => response.json())
+      .then(data => {
+        allSubjects = data.subjects;
+        checkboxContainer.innerHTML = '';
+        
+        data.subjects.forEach(subject => {
+          const isAlreadyAdded = data.already_added.includes(subject);
+          const item = document.createElement('div');
+          item.className = 'checkbox-dropdown-item';
+          item.innerHTML = `
+            <input type="checkbox" id="cb_${subject}" name="subject_names" value="${subject}" 
+              onchange="updateSelectedSubjects()" ${isAlreadyAdded ? 'disabled' : ''}>
+            <label for="cb_${subject}">${subject}${isAlreadyAdded ? ' ✓' : ''}</label>
+          `;
+          checkboxContainer.appendChild(item);
+        });
+      })
+      .catch(error => console.error('Error loading subjects:', error));
+  });
+
+  // Update selected subjects display
+  function updateSelectedSubjects() {
+    const checkboxes = checkboxContainer.querySelectorAll('input[type="checkbox"]:checked');
+    selectedSubjectsDiv.innerHTML = '';
+    selectedSubjects.clear();
+    
+    checkboxes.forEach(cb => {
+      selectedSubjects.add(cb.value);
+      const tag = document.createElement('span');
+      tag.textContent = cb.value;
+      selectedSubjectsDiv.appendChild(tag);
+    });
+
+    if (selectedSubjects.size > 0) {
+      document.getElementById('dropdownText').textContent = `${selectedSubjects.size} subject(s) selected`;
+    } else {
+      document.getElementById('dropdownText').textContent = 'Select subjects...';
+    }
+  }
+
+  // Form submission
+  subjectForm.addEventListener('submit', function(e) {
+    if (selectedSubjects.size === 0) {
+      e.preventDefault();
+      alert('Please select at least one subject');
+    }
+  });
+  </script>
+
+  <!-- ADD MARKS SECTION -->
+  <div class="section">
+    <h3>➕ Add Marks</h3>
+    <form method="POST" action="/academic/add-marks/{{ student.id }}/{{ sem_number }}/">
+      {% csrf_token %}
+      <div class="marks-form-grid">
+        <div class="marks-form-field">
+          <label for="subject">Subject</label>
+          <select name="subject" id="subject" required>
+            <option value="" disabled selected>Select Subject</option>
+            {% for subject in subjects %}
+            <option value="{{ subject.name }}">{{ subject.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="marks-form-field">
+          <label for="internal_marks">Internal Marks (0-50)</label>
+          <input type="number" name="internal_marks" id="internal_marks" placeholder="0-50" min="0" max="50" required/>
+        </div>
+        <div class="marks-form-field">
+          <label for="assignments">Assignments (0-20)</label>
+          <input type="number" name="assignments" id="assignments" placeholder="0-20" min="0" max="20" value="0"/>
+        </div>
+        <div class="marks-form-field" style="grid-column: 1;">
+          <label for="external_marks">External Marks (0-50)</label>
+          <input type="number" name="external_marks" id="external_marks" placeholder="0-50" min="0" max="50" required/>
+        </div>
+        <div class="marks-form-field" style="grid-column: 2 / 4; justify-self: start;">
+          <button type="submit" class="btn-blue" style="align-self: flex-end; margin-top: 20px;">Save Marks</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- ADD ATTENDANCE SECTION -->
+  <div class="section">
+    <h3>📅 Add Attendance</h3>
+    <form method="POST" action="/academic/add-attendance/{{ student.id }}/{{ sem_number }}/">
+      {% csrf_token %}
+      <div class="marks-form-grid">
+        <div class="marks-form-field">
+          <label for="subject_attendance">Subject</label>
+          <select name="subject_attendance" id="subject_attendance" required>
+            <option value="" disabled selected>Select Subject</option>
+            {% for subject in subjects %}
+            <option value="{{ subject.name }}">{{ subject.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="marks-form-field">
+          <label for="total_classes">Total Classes</label>
+          <input type="number" name="total_classes" id="total_classes" placeholder="0" min="0" required/>
+        </div>
+        <div class="marks-form-field">
+          <label for="attended_classes">Attended Classes</label>
+          <input type="number" name="attended_classes" id="attended_classes" placeholder="0" min="0" required/>
+        </div>
+        <div class="marks-form-field" style="grid-column: 1;">
+          <label for="attendance_percentage">Attendance %</label>
+          <input type="text" id="attendance_percentage" placeholder="0%" disabled style="background-color: #f5f5f5; cursor: not-allowed;"/>
+        </div>
+        <div class="marks-form-field" style="grid-column: 2 / 4; justify-self: start;">
+          <button type="submit" class="btn-blue" style="align-self: flex-end; margin-top: 20px;">Save Attendance</button>
+        </div>
+      </div>
+    </form>
+    <script>
+    // Calculate attendance percentage
+    const attendedInput = document.getElementById('attended_classes');
+    const totalInput = document.getElementById('total_classes');
+    const percentageInput = document.getElementById('attendance_percentage');
+
+    function updateAttendancePercentage() {
+      const total = parseInt(totalInput.value) || 0;
+      const attended = parseInt(attendedInput.value) || 0;
+      
+      if (total > 0) {
+        const percentage = Math.round((attended / total) * 100);
+        percentageInput.value = percentage + '%';
+      } else {
+        percentageInput.value = '';
+      }
+    }
+
+    attendedInput.addEventListener('input', updateAttendancePercentage);
+    totalInput.addEventListener('input', updateAttendancePercentage);
+    </script>
+  </div>
+
+  <!-- MARKS TABLE -->
+  <div class="section">
+    <h3>📊 Marks Records</h3>
+    {% if records %}
+    <table>
+      <tr>
+        <th>Subject</th>
+        <th>Internal</th>
+        <th>Assignments</th>
+        <th>External</th>
+        <th>Total</th>
+        <th>Result</th>
+        <th>Attendance %</th>
+        <th>Actions</th>
+      </tr>
+      {% for record in records %}
+      <tr>
+        <td>{{ record.subject }}</td>
+        <td>{{ record.internal_marks }}</td>
+        <td>{{ record.assignments }}</td>
+        <td>{{ record.external_marks }}</td>
+        <td>{{ record.total_marks }}</td>
+        <td>{% if record.result == 'Pass' %}<span class="pass">✅ Pass</span>{% else %}<span class="fail">❌ Fail</span>{% endif %}</td>
+        <td>{{ record.attendance_percentage }}%</td>
+        <td>
+          <a href="/academic/edit/{{ record.id }}/" class="btn-orange">✏️ Edit</a>
+          <form method="POST" action="/academic/delete/{{ record.id }}/" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn-red" onclick="return confirm('Delete this record?')">🗑️</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+    <div class="total-box">
+  📊 Total Marks: {{ total_marks }} | Subjects: {{ records|length }}
+  <br><br>
+  📅 Overall Semester Attendance: {{ total_attended }}/{{ total_classes }} classes
+  <span style="font-size:18px;color:{% if overall_attendance >= 75 %}#4CAF50{% else %}#e53935{% endif %};">
+    ({{ overall_attendance }}%)
+  </span>
+  {% if overall_attendance < 75 %}
+  <br><span style="color:#e53935;font-size:14px;font-weight:normal;">⚠️ Attendance below 75% — needs attention!</span>
+  {% endif %}
+</div>
+    {% else %}
+    <p class="empty">No marks added yet.</p>
+    {% endif %}
+  </div>
+
+  <!-- PROJECT SECTION (Last Semester Only) -->
+  {% if is_last_sem %}
+  <div class="project-box">
+    <h3>🎯 Project Work</h3>
+    {% if project %}
+    <p><strong>Project Name:</strong> {{ project.name }}</p>
+    {% if project.file %}<p><a href="{{ project.file.url }}" target="_blank" class="btn-blue">📎 View File</a></p>{% endif %}
+    <div style="margin-top: 12px; display: flex; gap: 8px;">
+      <button onclick="openProjectEditModal({{ project.id }}, '{{ project.name }}', {{ project.file|yesno:'true,false' }})" class="btn-orange">✏️ Edit</button>
+      <form method="POST" action="/academic/delete-project/{{ project.id }}/" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn-red" onclick="return confirm('Delete this project?')">🗑️ Delete</button>
+      </form>
+    </div>
+    {% else %}
+    <form method="POST" action="/academic/add-project/{{ student.id }}/{{ sem_number }}/" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="form-row">
+        <input type="text" name="project_name" placeholder="Project Name" required style="flex:1;"/>
+        <input type="file" name="project_file" accept=".pdf,.jpg,.jpeg,.png,.mp4"/>
+        <button type="submit" class="btn-green">+ Add Project</button>
+      </div>
+      <p style="color:#777;font-size:12px;margin-top:8px;">Accepted: PDF, Images (JPG/PNG), Videos (MP4)</p>
+    </form>
+    {% endif %}
+  </div>
+
+  <!-- PROJECT EDIT MODAL -->
+  <div id="projectEditModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:2000;align-items:center;justify-content:center;">
+    <div style="background:white;padding:2rem;border-radius:12px;max-width:500px;width:90%;box-shadow:0 4px 20px rgba(0,0,0,0.2);">
+      <h3 style="margin-bottom:1.5rem;color:#333;">Edit Project</h3>
+      <form method="POST" action="" enctype="multipart/form-data" id="projectEditForm">
+        {% csrf_token %}
+        <div style="margin-bottom:15px;">
+          <label style="display:block;margin-bottom:6px;font-weight:600;color:#555;">Project Name</label>
+          <input type="text" name="project_name" id="projectName" required style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:6px;font-size:14px;"/>
+        </div>
+        <div style="margin-bottom:15px;">
+          <label style="display:block;margin-bottom:6px;font-weight:600;color:#555;">Upload File (Optional)</label>
+          <input type="file" name="project_file" id="projectFile" accept=".pdf,.jpg,.jpeg,.png,.mp4" style="width:100%;padding:8px 12px;border:1px solid #ddd;border-radius:6px;"/>
+          <p id="fileInfo" style="color:#777;font-size:12px;margin-top:6px;"></p>
+        </div>
+        <div style="display:flex;gap:10px;justify-content:flex-end;">
+          <button type="button" class="btn-red" onclick="closeProjectEditModal()" style="background:#999;color:white;">Cancel</button>
+          <button type="submit" class="btn-blue">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+  function openProjectEditModal(projectId, projectName, hasFile) {
+    document.getElementById('projectName').value = projectName;
+    document.getElementById('projectEditForm').action = '/academic/edit-project/' + projectId + '/';
+    
+    const fileInfo = document.getElementById('fileInfo');
+    if (hasFile) {
+      fileInfo.textContent = '✓ File already uploaded. Select a new file to replace it or leave blank to keep existing.';
+      fileInfo.style.color = '#4CAF50';
+    } else {
+      fileInfo.textContent = 'No file currently uploaded. Select a file to upload.';
+      fileInfo.style.color = '#FF9800';
+    }
+    
+    document.getElementById('projectEditModal').style.display = 'flex';
+  }
+
+  function closeProjectEditModal() {
+    document.getElementById('projectEditModal').style.display = 'none';
+  }
+
+  // Close modal when clicking outside
+  document.getElementById('projectEditModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+      closeProjectEditModal();
+    }
+  });
+  </script>
+  {% endif %}
+
+</div>
+</body>
+</html>

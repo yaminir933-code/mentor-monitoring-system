@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Activity Records</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:Arial;background:#f0f2f5;}
+.navbar{background:#FF9800;padding:1rem 2rem;color:white;display:flex;justify-content:space-between;align-items:center;}
+.navbar a{color:white;text-decoration:none;}
+.container{padding:2rem;max-width:1100px;margin:auto;}
+.student-info{background:white;padding:1rem 1.5rem;border-radius:12px;margin-bottom:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.1);border-left:4px solid #FF9800;}
+.student-info h2{color:#FF9800;}
+.student-info p{color:#777;font-size:14px;}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;}
+.btn-add{background:#FF9800;color:white;padding:9px 18px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;}
+table{width:100%;background:white;border-collapse:collapse;box-shadow:0 2px 8px rgba(0,0,0,0.1);border-radius:12px;overflow:hidden;}
+th{background:#FF9800;color:white;padding:12px 15px;text-align:left;font-size:13px;}
+td{padding:12px 15px;border-bottom:1px solid #f0f0f0;font-size:13px;color:#555;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#fff8e1;}
+.btn-edit{background:#1976D2;color:white;padding:5px 10px;border-radius:6px;text-decoration:none;font-size:12px;}
+.btn-delete{background:#e53935;color:white;padding:5px 10px;border-radius:6px;text-decoration:none;font-size:12px;}
+.btn-view{background:#4CAF50;color:white;padding:5px 10px;border-radius:6px;text-decoration:none;font-size:12px;}
+.status-active{color:#4CAF50;font-weight:bold;}
+.status-completed{color:#1976D2;font-weight:bold;}
+.status-ongoing{color:#FF9800;font-weight:bold;}
+.status-not{color:#e53935;font-weight:bold;}
+.empty{text-align:center;padding:3rem;color:#999;}
+</style>
+</head>
+<body>
+<div class="navbar">
+  <span>🎓 MentorApp</span>
+  <a href="/activity/">← Back</a>
+</div>
+<div class="container">
+  <div class="student-info">
+    <h2>{{ student.name }}</h2>
+    <p>{{ student.department }} | Roll: {{ student.roll_number }}</p>
+  </div>
+  <div class="top">
+    <h3 style="color:#333;">🏃 Activity Records</h3>
+    <a href="/activity/add/{{ student.id }}/" class="btn-add">+ Add Activity</a>
+  </div>
+  {% if records %}
+  <table>
+    <tr>
+      <th>No.</th>
+      <th>Activity Type</th>
+      <th>Activity Name</th>
+      <th>Date</th>
+      <th>Status</th>
+      <th>Achievement</th>
+      <th>Upload</th>
+      <th>Actions</th>
+    </tr>
+    {% for record in records %}
+    <tr>
+      <td>{{ forloop.counter }}</td>
+      <td>{{ record.activity_type }}</td>
+      <td>{{ record.activity_name }}</td>
+      <td>{{ record.date }}</td>
+      <td>
+        {% if record.participation_status == 'Active' %}<span class="status-active">● Active</span>
+        {% elif record.participation_status == 'Completed' %}<span class="status-completed">● Completed</span>
+        {% elif record.participation_status == 'Ongoing' %}<span class="status-ongoing">● Ongoing</span>
+        {% else %}<span class="status-not">● Not Participating</span>{% endif %}
+      </td>
+      <td>{{ record.achievement|default:"-" }}</td>
+      <td>
+        {% if record.upload_file %}
+        <a href="{{ record.upload_file.url }}" target="_blank" class="btn-view">📎 View</a>
+        {% else %}<span style="color:#999;">No file</span>{% endif %}
+      </td>
+      <td>
+        <a href="/activity/edit/{{ record.id }}/" class="btn-edit">✏️ Edit</a>
+        <a href="/activity/delete/{{ record.id }}/" class="btn-delete">🗑️ Delete</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <div class="empty">No activity records yet. <a href="/activity/add/{{ student.id }}/">Add one!</a></div>
+  {% endif %}
+</div>
+</body>
+</html>

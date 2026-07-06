@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Delete Student</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: Arial; background: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; }
+.box { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; max-width: 400px; }
+h2 { color: #333; margin-bottom: 1rem; }
+p { color: #777; margin-bottom: 1.5rem; }
+.btn-yes { background: #e53935; color: white; padding: 10px 24px; border: none; border-radius: 6px; cursor: pointer; margin-right: 10px; }
+.btn-no { background: #4CAF50; color: white; padding: 10px 24px; border-radius: 6px; text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="box">
+  <h2>⚠️ Delete Student?</h2>
+  <p>Are you sure you want to delete <b>{{ student.name }}</b>? This will also delete all their meetings!</p>
+  <form method="post">
+    {% csrf_token %}
+    <button class="btn-yes" type="submit">Yes, Delete</button>
+    <a class="btn-no" href="/students">No, Cancel</a>
+  </form>
+</div>
+</body>
+</html>

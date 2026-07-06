@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head><title>Edit Meeting</title></head>
+<body>
+<h2>Edit Meeting</h2>
+{% if error %}<p style="color:red">{{ error }}</p>{% endif %}
+<form method="post">
+  {% csrf_token %}
+  <p>Date: <input type="date" name="date" value="{{ meeting.date }}" required></p>
+  <p>Meeting Type:
+    <select name="meeting_type">
+      <option value="academic" {% if meeting.meeting_type == 'academic' %}selected{% endif %}>Academic</option>
+      <option value="activity" {% if meeting.meeting_type == 'activity' %}selected{% endif %}>Activity</option>
+      <option value="career" {% if meeting.meeting_type == 'career' %}selected{% endif %}>Career</option>
+      <option value="general" {% if meeting.meeting_type == 'general' %}selected{% endif %}>General</option>
+    </select>
+  </p>
+  <p>Discussion: <textarea name="discussion">{{ meeting.discussion }}</textarea></p>
+  <p>Guidance: <textarea name="guidance">{{ meeting.guidance }}</textarea></p>
+  <p>Follow Up: <textarea name="follow_up">{{ meeting.follow_up }}</textarea></p>
+  <button type="submit">Update Meeting</button>
+</form>
+</body>
+</html>

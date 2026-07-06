@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>View Meetings</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: Arial; background: #f0f2f5; }
+.navbar { background: #4CAF50; padding: 1rem 2rem; color: white; display: flex; justify-content: space-between; align-items: center; }
+.navbar a { color: white; text-decoration: none; }
+.container { padding: 2rem; max-width: 900px; margin: auto; }
+.stats-box { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
+.stat-card { background: white; padding: 1.2rem; border-radius: 12px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.stat-card h3 { font-size: 2rem; color: #4CAF50; }
+.stat-card p { color: #777; font-size: 0.9rem; }
+.missed-alert { background: #ffebee; border-left: 4px solid #e53935; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; color: #c62828; }
+.btn-add { background: #4CAF50; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; display: inline-block; margin-bottom: 1.5rem; }
+.meeting-card { background: white; border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid #4CAF50; }
+.meeting-header { display: flex; justify-content: space-between; margin-bottom: 1rem; }
+.meeting-type { background: #e8f5e9; color: #4CAF50; padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; }
+.meeting-body p { margin-bottom: 0.5rem; color: #555; }
+.actions { margin-top: 1rem; display: flex; gap: 10px; }
+.btn-edit { background: #1976D2; color: white; padding: 6px 16px; border-radius: 6px; text-decoration: none; }
+.btn-delete { background: #e53935; color: white; padding: 6px 16px; border-radius: 6px; text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="navbar">
+  <span>🎓 MentorApp</span>
+  <a href="/meeting">← Back</a>
+</div>
+<div class="container">
+  <h2 style="margin-bottom:0.5rem;">📋 Meetings - {{ student.name }}</h2>
+  <p style="color:#777; margin-bottom:1.5rem;">{{ student.department }} | Roll: {{ student.roll_number }}</p>
+  <div class="stats-box">
+    <div class="stat-card">
+      <h3>{{ total }}</h3>
+      <p>Total Meetings</p>
+    </div>
+    <div class="stat-card">
+      <h3>{{ regularity }}%</h3>
+      <p>Regularity Score</p>
+    </div>
+    <div class="stat-card">
+      <h3>{% if missed %}⚠️{% else %}✅{% endif %}</h3>
+      <p>{% if missed %}Missed{% else %}On Track{% endif %}</p>
+    </div>
+  </div>
+  {% if missed %}
+  <div class="missed-alert">⚠️ <b>Meeting Missed!</b> More than 14 days since last meeting.</div>
+  {% endif %}
+  <a class="btn-add" href="/meeting/add/{{ student.id }}">+ Add Meeting</a>
+  {% for meeting in meetings %}
+  <div class="meeting-card">
+    <div class="meeting-header">
+      <span class="meeting-date"><b>📅 {{ meeting.date }}</b></span>
+      <span class="meeting-type">{{ meeting.meeting_type }}</span>
+    </div>
+    <div class="meeting-body">
+      <p><b>Discussion:</b> {{ meeting.discussion }}</p>
+      <p><b>Guidance:</b> {{ meeting.guidance }}</p>
+      <p><b>Follow Up:</b> {{ meeting.follow_up }}</p>
+    </div>
+    <div class="actions">
+      <a class="btn-edit" href="/meeting/edit/{{ meeting.id }}">✏️ Edit</a>
+      <a class="btn-delete" href="/meeting/delete/{{ meeting.id }}">🗑️ Delete</a>
+    </div>
+  </div>
+  {% empty %}
+  <p style="text-align:center; color:#999; padding:3rem;">No meetings added yet.</p>
+  {% endfor %}
+</div>
+</body>
+</html>

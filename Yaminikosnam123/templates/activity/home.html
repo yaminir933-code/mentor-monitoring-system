@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Activity Guidance</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: Arial; background: #f0f2f5; }
+.navbar { background: #FF9800; padding: 1rem 2rem; color: white; display: flex; justify-content: space-between; align-items: center; }
+.navbar a { color: white; text-decoration: none; }
+.container { padding: 2rem; max-width: 1100px; margin: auto; }
+h2 { color: #333; margin-bottom: 1.5rem; }
+.dept-section { margin-bottom: 2rem; }
+.dept-title { background: #FF9800; color: white; padding: 0.8rem 1.2rem; border-radius: 8px 8px 0 0; font-weight: bold; }
+table { width: 100%; background: white; border-collapse: collapse; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-radius: 0 0 12px 12px; overflow: hidden; }
+th { background: #fff3e0; color: #e65100; padding: 12px 15px; text-align: left; font-size: 0.85rem; }
+td { padding: 12px 15px; border-bottom: 1px solid #f0f0f0; color: #555; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #fff8f0; }
+.btn-add { background: #FF9800; color: white; padding: 5px 12px; border-radius: 6px; text-decoration: none; font-size: 0.8rem; margin-right: 5px; }
+.btn-view { background: #4CAF50; color: white; padding: 5px 12px; border-radius: 6px; text-decoration: none; font-size: 0.8rem; }
+.empty { text-align: center; padding: 2rem; color: #999; }
+</style>
+</head>
+<body>
+<div class="navbar">
+  <span>🎓 MentorApp</span>
+  <a href="/dashboard">← Back to Dashboard</a>
+</div>
+<div class="container">
+  <h2>🏃 Activity Guidance</h2>
+
+  {% regroup students by department as dept_list %}
+  {% for dept in dept_list %}
+  <div class="dept-section">
+    <div class="dept-title">🏫 {{ dept.grouper }} — {{ dept.list|length }} Student(s)</div>
+    <table>
+      <tr>
+        <th>No.</th>
+        <th>Name</th>
+        <th>Roll No</th>
+        <th>Actions</th>
+      </tr>
+      {% for student in dept.list %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ student.name }}</td>
+        <td>{{ student.roll_number }}</td>
+        <td>
+          <a class="btn-add" href="/activity/add/{{ student.id }}">+ Add Activity</a>
+          <a class="btn-view" href="/activity/view/{{ student.id }}">View Activities</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+  {% empty %}
+  <p class="empty">No students found. Please add students from Manage Students.</p>
+  {% endfor %}
+</div>
+</body>
+</html>

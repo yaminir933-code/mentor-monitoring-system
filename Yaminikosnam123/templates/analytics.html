@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Analytics Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:Arial;background:#f0f2f5;}
+.navbar{background:#2196F3;padding:1rem 2rem;color:white;display:flex;justify-content:space-between;align-items:center;}
+.navbar a{color:white;text-decoration:none;}
+.container{padding:2rem;max-width:1200px;margin:auto;}
+h2{color:#333;margin-bottom:1.5rem;}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem;}
+.stat-card{background:white;border-radius:12px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.1);text-align:center;}
+.stat-card .number{font-size:36px;font-weight:bold;margin-bottom:4px;}
+.stat-card .label{color:#777;font-size:14px;}
+.stat-card.blue .number{color:#2196F3;}
+.stat-card.green .number{color:#4CAF50;}
+.stat-card.orange .number{color:#FF9800;}
+.stat-card.purple .number{color:#9C27B0;}
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem;}
+.chart-card{background:white;border-radius:12px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+.chart-card h3{color:#333;margin-bottom:1rem;font-size:16px;border-bottom:2px solid #f0f0f0;padding-bottom:8px;}
+.full-width{grid-column:1/-1;}
+</style>
+</head>
+<body>
+<div class="navbar">
+  <span>🎓 MentorApp — Analytics Dashboard</span>
+  <a href="/dashboard">← Back to Dashboard</a>
+</div>
+<div class="container">
+  <h2>📊 Comprehensive Analytics Dashboard</h2>
+<!-- Year Filter Dropdown -->
+  <div style="margin-bottom:1.5rem;background:white;padding:1.5rem;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.1);display:flex;align-items:center;gap:1rem;">
+    <span style="font-weight:600;color:#333;display:flex;align-items:center;gap:6px;">
+      <span style="font-size:18px;">📅</span>
+      Filter by Year:
+    </span>
+    <select id="yearFilter" style="padding:9px 16px;border:2px solid #e0e0e0;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;background:white;color:#333;min-width:120px;transition:all 0.3s ease;">
+      <option value="all" {% if selected_year == 'all' %}selected{% endif %}>All Years</option>
+      {% for year in available_years %}
+      <option value="{{ year }}" {% if year|stringformat:"s" == selected_year|stringformat:"s" %}selected{% endif %}>{{ year }}</option>
+      {% endfor %}
+    </select>
+    <span style="color:#777;font-size:13px;">
+      Showing data for: <b style="color:#2196F3;font-size:14px;" id="selectedYearDisplay">
+        {% if selected_year == 'all' %}All Years{% else %}{{ selected_year }}{% endif %}
+      </b>
+    </span>
+  </div>
+
+  <script>
+  document.getElementById('yearFilter').addEventListener('change', function(e) {
+    const year = e.target.value;
+    // Update the display text
+    const display = document.getElementById('selectedYearDisplay');
+    if (year === 'all') {
+      display.textContent = 'All Years';
+    } else {
+      display.textContent = year;
+    }
+    // Redirect with the selected year
+    window.location.href = '/analytics/?year=' + year;
+  });
+  
+  // Style the dropdown on focus
+  document.getElementById('yearFilter').addEventListener('focus', function(e) {
+    e.target.style.borderColor = '#2196F3';
+    e.target.style.boxShadow = '0 0 0 3px rgba(33,150,243,0.1)';
+  });
+  
+  document.getElementById('yearFilter').addEventListener('blur', function(e) {
+    e.target.style.borderColor = '#e0e0e0';
+    e.target.style.boxShadow = 'none';
+  });
+  </script>
+  <!-- STAT CARDS -->
+  <div class="stats-row">
+    <div class="stat-card blue">
+      <div class="number">{{ total_students }}</div>
+      <div class="label">Total Students</div>
+    </div>
+    <div class="stat-card green">
+      <div class="number">{{ total_degree }}</div>
+      <div class="label">Degree Students</div>
+    </div>
+    <div class="stat-card purple">
+      <div class="number">{{ total_pg }}</div>
+      <div class="label">PG Students</div>
+    </div>
+    <div class="stat-card orange">
+      <div class="number">{{ total_placed }}</div>
+      <div class="label">Placed Students</div>
+    </div>
+  </div>
+
+  <!-- CHARTS -->
+  <div class="charts-grid">
+    <div class="chart-card">
+      <h3>🎓 Degree vs PG Students</h3>
+      <canvas id="degreeChart"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>💼 Career Path Distribution</h3>
+      <canvas id="careerChart"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>🏃 Activity Participation</h3>
+      <canvas id="activityChart"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>📚 Department wise Students</h3>
+      <canvas id="deptChart"></canvas>
+    </div>
+    <div class="chart-card full-width">
+      <h3>📊 Semester wise Average Marks</h3>
+      <canvas id="marksChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<script>
+// Degree vs PG
+new Chart(document.getElementById('degreeChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Degree', 'PG'],
+    datasets: [{
+      data: [{{ total_degree }}, {{ total_pg }}],
+      backgroundColor: ['#2196F3', '#9C27B0'],
+    }]
+  },
+  options: {responsive: true}
+});
+
+// Career Path
+new Chart(document.getElementById('careerChart'), {
+  type: 'pie',
+  data: {
+    labels: ['Higher Studies', 'Job Placement', 'Undecided'],
+    datasets: [{
+      data: [{{ higher_studies }}, {{ job_placement }}, {{ undecided }}],
+      backgroundColor: ['#4CAF50', '#2196F3', '#FF9800'],
+    }]
+  },
+  options: {responsive: true}
+});
+
+// Activity
+new Chart(document.getElementById('activityChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Active', 'Completed', 'Ongoing', 'Not Participating'],
+    datasets: [{
+      label: 'Students',
+      data: [{{ activity_active }}, {{ activity_completed }}, {{ activity_ongoing }}, {{ activity_not }}],
+      backgroundColor: ['#4CAF50', '#2196F3', '#FF9800', '#e53935'],
+    }]
+  },
+  options: {responsive: true, plugins: {legend: {display: false}}}
+});
+
+// Department
+new Chart(document.getElementById('deptChart'), {
+  type: 'bar',
+  data: {
+    labels: [{% for d in dept_data %}'{{ d.department }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+    datasets: [{
+      label: 'Students',
+      data: [{% for d in dept_data %}{{ d.count }}{% if not forloop.last %},{% endif %}{% endfor %}],
+      backgroundColor: '#9C27B0',
+    }]
+  },
+  options: {responsive: true, plugins: {legend: {display: false}}}
+});
+
+// Marks
+new Chart(document.getElementById('marksChart'), {
+  type: 'line',
+  data: {
+    labels: [{% for m in marks_data %}'Sem {{ m.semester }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+    datasets: [{
+      label: 'Average Marks',
+      data: [{% for m in marks_data %}{{ m.avg }}{% if not forloop.last %},{% endif %}{% endfor %}],
+      borderColor: '#2196F3',
+      backgroundColor: 'rgba(33,150,243,0.1)',
+      fill: true,
+      tension: 0.4,
+    }]
+  },
+  options: {responsive: true}
+});
+</script>
+</body>
+</html>

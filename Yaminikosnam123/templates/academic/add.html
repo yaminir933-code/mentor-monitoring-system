@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Add Academic Record</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: Arial; background: #f0f2f5; }
+.navbar { background: #1976D2; padding: 1rem 2rem; color: white; display: flex; justify-content: space-between; align-items: center; }
+.navbar a { color: white; text-decoration: none; }
+.container { padding: 2rem; max-width: 800px; margin: auto; }
+.form-card { background: white; border-radius: 16px; padding: 2rem; box-shadow: 0 4px 16px rgba(0,0,0,0.1); margin-bottom: 1.5rem; }
+.form-title { color: #1976D2; font-size: 1.4rem; margin-bottom: 0.3rem; }
+.form-subtitle { color: #777; font-size: 0.9rem; margin-bottom: 1.5rem; }
+.section-title { color: #1976D2; font-weight: bold; margin: 1.5rem 0 1rem; border-bottom: 2px solid #e3f2fd; padding-bottom: 0.5rem; }
+label { display: block; color: #555; font-weight: bold; margin-bottom: 0.4rem; font-size: 0.9rem; }
+input, select, textarea { width: 100%; padding: 10px 14px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.95rem; font-family: Arial; }
+input:focus, select:focus, textarea:focus { outline: none; border-color: #1976D2; box-shadow: 0 0 0 3px rgba(25,118,210,0.1); }
+textarea { height: 80px; resize: vertical; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+.subject-row { background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #1976D2; }
+.subject-name { font-weight: bold; color: #333; margin-bottom: 0.8rem; }
+.marks-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+.total-display { background: #e3f2fd; padding: 8px 14px; border-radius: 8px; font-weight: bold; color: #1976D2; text-align: center; }
+.btn-save { background: #1976D2; color: white; padding: 12px 30px; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; width: 100%; margin-top: 1rem; }
+.btn-save:hover { background: #1565C0; }
+.error { background: #ffebee; color: #c62828; padding: 0.8rem; border-radius: 8px; margin-bottom: 1rem; }
+.success { background: #e8f5e9; color: #2e7d32; padding: 0.8rem; border-radius: 8px; margin-bottom: 1rem; }
+.weak-alert { background: #fff3e0; color: #e65100; padding: 0.5rem 0.8rem; border-radius: 6px; font-size: 0.85rem; margin-top: 0.5rem; }
+select { background: white; }
+</style>
+</head>
+<body>
+<div class="navbar">
+  <span>🎓 MentorApp</span>
+  <a href="/academic">← Back</a>
+</div>
+<div class="container">
+  <div class="form-card">
+    <div class="form-title">📝 Add Academic Record</div>
+    <div class="form-subtitle">Student: <b>{{ student.name }}</b> | {{ student.department }} | Roll: {{ student.roll_number }}</div>
+
+    {% if error %}<div class="error">⚠️ {{ error }}</div>{% endif %}
+    {% if success %}<div class="success">✅ {{ success }}</div>{% endif %}
+
+    <form method="post" id="academicForm">
+      {% csrf_token %}
+
+      <div class="form-row">
+        <div>
+          <label>📅 Select Semester</label>
+          <select name="semester" id="semesterSelect" onchange="loadSubjects()">
+            <option value="">-- Select Semester --</option>
+            <option value="Semester 1">Semester 1</option>
+            <option value="Semester 2">Semester 2</option>
+            <option value="Semester 3">Semester 3</option>
+            <option value="Semester 4">Semester 4</option>
+            <option value="Semester 5">Semester 5</option>
+            <option value="Semester 6">Semester 6</option>
+            <option value="Semester 7">Semester 7</option>
+            <option value="Semester 8">Semester 8</option>
+          </select>
+        </div>
+        <div>
+          <label>📅 Attendance</label>
+          <div class="form-row" style="margin-bottom:0;">
+            <div>
+              <input type="number" name="total_classes" placeholder="Total Classes" min="0">
+            </div>
+            <div>
+              <input type="number" name="attended_classes" placeholder="Attended" min="0">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title">📚 Subject-wise Marks</div>
+      <div id="subjectContainer">
+        <p style="color:#999; text-align:center; padding:1rem;">Please select a semester to load subjects.</p>
+      </div>
+
+      <button class="btn-save" type="submit">💾 Save All Records</button>
+    </form>
+  </div>
+</div>
+
+<script>
+const subjectsBySemester = {
+  'Semester 1': ['Mathematics I', 'Physics', 'Chemistry', 'English', 'Programming Basics'],
+  'Semester 2': ['Mathematics II', 'Data Structures', 'Digital Electronics', 'Environmental Science', 'Communication Skills'],
+  'Semester 3': ['Mathematics III', 'Object Oriented Programming', 'Database Management', 'Computer Networks', 'Discrete Mathematics'],
+  'Semester 4': ['Operating Systems', 'Software Engineering', 'Theory of Computation', 'Microprocessors', 'Web Technologies'],
+  'Semester 5': ['Compiler Design', 'Artificial Intelligence', 'Computer Graphics', 'Elective I', 'Project I'],
+  'Semester 6': ['Machine Learning', 'Cloud Computing', 'Information Security', 'Elective II', 'Project II'],
+  'Semester 7': ['Big Data', 'IoT', 'Elective III', 'Elective IV', 'Major Project I'],
+  'Semester 8': ['Elective V', 'Elective VI', 'Major Project II', 'Seminar', 'Industrial Training'],
+};
+
+function loadSubjects() {
+  const semester = document.getElementById('semesterSelect').value;
+  const container = document.getElementById('subjectContainer');
+  if (!semester) {
+    container.innerHTML = '<p style="color:#999; text-align:center; padding:1rem;">Please select a semester to load subjects.</p>';
+    return;
+  }
+  const subjects = subjectsBySemester[semester] || [];
+  let html = '';
+  subjects.forEach((subject, index) => {
+    html += `
+    <div class="subject-row">
+      <div class="subject-name">📖 ${subject}</div>
+      <input type="hidden" name="subject_${index}" value="${subject}">
+      <div class="marks-row">
+        <div>
+          <label>Internal (0-50)</label>
+          <input type="number" name="internal_${index}" min="0" max="50" placeholder="0-50"
+            oninput="calcTotal(${index})" onblur="validateMarks(this, 0, 50)">
+        </div>
+        <div>
+          <label>External (0-50)</label>
+          <input type="number" name="external_${index}" min="0" max="50" placeholder="0-50"
+            oninput="calcTotal(${index})" onblur="validateMarks(this, 0, 50)">
+        </div>
+        <div>
+          <label>Total</label>
+          <div class="total-display" id="total_${index}">-</div>
+        </div>
+      </div>
+      <div id="weak_${index}"></div>
+      <div style="margin-top:0.8rem;">
+        <label>📝 Guidance Notes</label>
+        <textarea name="guidance_${index}" id="guidance_${index}" placeholder="Guidance for this subject..."></textarea>
+      </div>
+    </div>`;
+  });
+  html += `<input type="hidden" name="subject_count" value="${subjects.length}">`;
+  container.innerHTML = html;
+}
+
+function validateMarks(input, min, max) {
+  const val = parseFloat(input.value);
+  if (input.value !== '' && (isNaN(val) || val < min || val > max)) {
+    input.style.borderColor = '#e53935';
+    alert(`⚠️ Marks not typed correctly! Please enter a value between ${min} and ${max}.`);
+    input.value = '';
+    input.style.borderColor = '#ddd';
+  }
+}
+
+function calcTotal(index) {
+  const internal = parseFloat(document.querySelector(`[name="internal_${index}"]`).value) || 0;
+  const external = parseFloat(document.querySelector(`[name="external_${index}"]`).value) || 0;
+  const total = internal + external;
+  const totalDiv = document.getElementById(`total_${index}`);
+  const weakDiv = document.getElementById(`weak_${index}`);
+  totalDiv.textContent = total;
+  if (internal > 0 || external > 0) {
+    if (total < 50) {
+      totalDiv.style.background = '#ffebee';
+      totalDiv.style.color = '#e53935';
+      weakDiv.innerHTML = '<div class="weak-alert">⚠️ Weak Subject / Backlog Risk! Guidance recommended.</div>';
+      const guidanceBox = document.getElementById(`guidance_${index}`);
+      if (!guidanceBox.value) {
+        guidanceBox.value = 'Student needs extra attention in this subject. Please schedule additional sessions.';
+      }
+    } else {
+      totalDiv.style.background = '#e8f5e9';
+      totalDiv.style.color = '#2e7d32';
+      weakDiv.innerHTML = '<div style="color:#4CAF50; font-size:0.85rem; margin-top:0.5rem;">✅ Good performance!</div>';
+    }
+  }
+}
+</script>
+</body>
+</html>

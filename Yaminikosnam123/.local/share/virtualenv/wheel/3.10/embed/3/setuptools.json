@@ -1,0 +1,19 @@
+{
+  "completed": "2026-03-30T06:19:15.807325Z",
+  "periodic": true,
+  "started": "2026-03-30T06:19:08.044455Z",
+  "versions": [
+    {
+      "filename": "setuptools-82.0.1-py3-none-any.whl",
+      "found_date": "2026-03-30T06:19:08.344582Z",
+      "release_date": "2026-03-09T12:47:15.000000Z",
+      "source": "periodic"
+    },
+    {
+      "filename": "setuptools-82.0.0-py3-none-any.whl",
+      "found_date": "2026-03-30T06:19:12.840445Z",
+      "release_date": "2026-02-08T15:08:38.000000Z",
+      "source": "periodic"
+    }
+  ]
+}

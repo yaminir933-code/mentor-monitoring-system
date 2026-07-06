@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Analytics - {{ student.name }}</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .chart { width: 45%; display: inline-block; margin: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Success Analytics for {{ student.name }} ({{ student.roll_no }})</h1>
+    <p>Average Marks: {{ avg_marks|floatformat:2 }}/70</p>
+
+    <div class="chart">
+        <canvas id="marksChart"></canvas>
+    </div>
+    <div class="chart">
+        <canvas id="passFailChart"></canvas>
+    </div>
+
+    <script>
+        // Bar Chart - Marks
+        new Chart(document.getElementById('marksChart'), {
+            type: 'bar',
+            data: {
+                labels: [{% for m in marks %}'{{ m.subject }}',{% endfor %}],
+                datasets: [{
+                    label: 'Marks (out of 70)',
+                    data: [{% for m in marks %}{{ m.score }},{% endfor %}],
+                    backgroundColor: [{% for m in marks %}{% if m.is_pass %}'green'{% else %}'red'{% endif %},{% endfor %}]
+                }]
+            },
+            options: { scales: { y: { beginAtZero: true, max: 70 }} }
+        });
+
+        // Pie Chart - Pass/Fail
+        new Chart(document.getElementById('passFailChart'), {
+            type: 'pie',
+            data: {
+                labels: ['Pass', 'Fail'],
+                datasets: [{
+                    data: [{{ pass_count }}, {{ fail_count }}],
+                    backgroundColor: ['#4CAF50', '#f44336']
+                }]
+            }
+        });
+    </script>
+</body>
+</html>
