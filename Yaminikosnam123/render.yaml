@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: mentor-monitoring-system
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn mentorapp.wsgi:application"
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: DATABASE_URL
+        sync: false
+      - key: ALLOWED_HOSTS
+        sync: false
+      - key: CSRF_TRUSTED_ORIGINS
+        sync: false
+      - key: PYTHON_VERSION
+        value: "3.10.0"
