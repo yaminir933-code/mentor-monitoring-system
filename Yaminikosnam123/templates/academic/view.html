@@ -1,75 +1,356 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>View Academic Records</title>
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: Arial; background: #f0f2f5; }
-.navbar { background: #1976D2; padding: 1rem 2rem; color: white; display: flex; justify-content: space-between; align-items: center; }
-.navbar a { color: white; text-decoration: none; }
-.container { padding: 2rem; max-width: 1100px; margin: auto; }
-h2 { color: #333; margin-bottom: 0.5rem; }
-.btn-add { background: #1976D2; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; display: inline-block; margin-bottom: 1.5rem; }
-table { width: 100%; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-collapse: collapse; overflow: hidden; }
-th { background: #1976D2; color: white; padding: 12px 15px; text-align: left; font-size: 0.85rem; }
-td { padding: 12px 15px; border-bottom: 1px solid #f0f0f0; color: #555; font-size: 0.85rem; }
-tr:last-child td { border-bottom: none; }
-tr:hover td { background: #f9f9f9; }
-.pass { color: #4CAF50; font-weight: bold; }
-.fail { color: #e53935; font-weight: bold; }
-.good-att { color: #4CAF50; font-weight: bold; }
-.low-att { color: #e53935; font-weight: bold; }
-.btn-edit { background: #1976D2; color: white; padding: 5px 10px; border-radius: 6px; text-decoration: none; font-size: 0.8rem; margin-right: 5px; }
-.btn-delete { background: #e53935; color: white; padding: 5px 10px; border-radius: 6px; text-decoration: none; font-size: 0.8rem; }
-.empty { text-align: center; padding: 2rem; color: #999; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Records - {{ student.name }}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: #1976D2;
+            padding: 1rem 2rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+
+        .navbar span { font-size: 1.1rem; font-weight: 700; }
+        .navbar a { color: white; text-decoration: none; font-size: 0.95rem; }
+        .navbar a:hover { text-decoration: underline; }
+
+        .container {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.8rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .page-header h2 {
+            font-size: 1.6rem;
+            color: #1565c0;
+            font-weight: 700;
+        }
+
+        .page-header p {
+            color: #777;
+            margin-top: 0.3rem;
+            font-size: 0.95rem;
+        }
+
+        .student-card {
+            background: white;
+            border-left: 5px solid #1976D2;
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.8rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .student-card .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .student-card .info-label {
+            font-size: 0.75rem;
+            color: #999;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .student-card .info-value {
+            font-size: 1rem;
+            color: #333;
+            font-weight: 600;
+            margin-top: 0.2rem;
+        }
+
+        /* Semester sections */
+        .sem-section {
+            margin-bottom: 2rem;
+        }
+
+        .sem-header {
+            background: linear-gradient(135deg, #1976D2, #1565c0);
+            color: white;
+            padding: 0.85rem 1.2rem;
+            border-radius: 10px 10px 0 0;
+            font-weight: 700;
+            font-size: 0.95rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sem-header a {
+            color: white;
+            text-decoration: none;
+            background: rgba(255,255,255,0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            transition: background 0.2s;
+        }
+
+        .sem-header a:hover { background: rgba(255,255,255,0.35); }
+
+        .table-wrap {
+            background: white;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead th {
+            background: #e3f2fd;
+            color: #1565c0;
+            padding: 10px 14px;
+            text-align: left;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            border-bottom: 2px solid #bbdefb;
+        }
+
+        tbody td {
+            padding: 11px 14px;
+            border-bottom: 1px solid #f5f5f5;
+            color: #555;
+            font-size: 0.87rem;
+        }
+
+        tbody tr:last-child td { border-bottom: none; }
+        tbody tr:hover td { background: #f5f9ff; }
+
+        .badge-pass {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-fail {
+            background: #fdecea;
+            color: #c62828;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .att-good { color: #2e7d32; font-weight: 700; }
+        .att-low  { color: #c62828; font-weight: 700; }
+
+        .btn-edit {
+            background: #FF9800;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-right: 5px;
+            transition: background 0.2s;
+        }
+
+        .btn-edit:hover { background: #F57C00; }
+
+        .btn-delete {
+            background: #e53935;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .btn-delete:hover { background: #c62828; }
+
+        .sem-summary {
+            background: #e3f2fd;
+            padding: 0.8rem 1.2rem;
+            font-size: 0.88rem;
+            color: #1565c0;
+            font-weight: 600;
+            border-top: 1px solid #bbdefb;
+        }
+
+        .empty-sem {
+            padding: 1.5rem;
+            text-align: center;
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .no-records {
+            background: white;
+            border-radius: 10px;
+            padding: 3rem 2rem;
+            text-align: center;
+            color: #999;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        }
+
+        .no-records .icon { font-size: 3rem; margin-bottom: 1rem; }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            thead th, tbody td { padding: 8px 10px; font-size: 0.8rem; }
+            .student-card { gap: 1rem; }
+        }
+    </style>
 </head>
 <body>
+
 <div class="navbar">
-  <span>🎓 MentorApp</span>
-  <a href="/academic">← Back</a>
+    <span>🎓 MentorApp</span>
+    <a href="/academic/">← Back to Academic</a>
 </div>
+
 <div class="container">
-  <h2>📚 Academic Records - {{ student.name }}</h2>
-  <p style="color:#777; margin-bottom:1.5rem;">{{ student.department }} | Roll: {{ student.roll_number }}</p>
-  <a class="btn-add" href="/academic/add/{{ student.id }}">+ Add Record</a>
-  <table>
-    <tr>
-      <th>No.</th>
-      <th>Semester</th>
-      <th>Subject</th>
-      <th>Internal</th>
-      <th>External</th>
-      <th>Total</th>
-      <th>Result</th>
-      <th>Total Classes</th>
-      <th>Attended</th>
-      <th>Attendance %</th>
-      <th>Guidance</th>
-      <th>Actions</th>
-    </tr>
-    {% for record in records %}
-    <tr>
-      <td>{{ forloop.counter }}</td>
-      <td>{{ record.semester }}</td>
-      <td>{{ record.subject }}</td>
-      <td>{{ record.internal_marks }}</td>
-      <td>{{ record.external_marks }}</td>
-      <td>{{ record.total_marks }}</td>
-      <td>{% if record.result == 'Pass' %}<span class="pass">✅ Pass</span>{% else %}<span class="fail">❌ Fail</span>{% endif %}</td>
-      <td>{{ record.total_classes }}</td>
-      <td>{{ record.attended_classes }}</td>
-      <td>{% if record.attendance_percentage >= 75 %}<span class="good-att">{{ record.attendance_percentage }}%</span>{% else %}<span class="low-att">{{ record.attendance_percentage }}% ⚠️</span>{% endif %}</td>
-      <td>{{ record.guidance_notes|default:"-" }}</td>
-      <td>
-        <a class="btn-edit" href="/academic/edit/{{ record.id }}">✏️</a>
-        <a class="btn-delete" href="/academic/delete/{{ record.id }}">🗑️</a>
-      </td>
-    </tr>
-    {% empty %}
-    <tr><td colspan="12" class="empty">No records added yet.</td></tr>
-    {% endfor %}
-  </table>
+
+    <div class="page-header">
+        <div>
+            <h2>📚 Academic Records</h2>
+            <p>Viewing all semester records for {{ student.name }}</p>
+        </div>
+    </div>
+
+    <!-- Student Info -->
+    <div class="student-card">
+        <div class="info-item">
+            <span class="info-label">Student Name</span>
+            <span class="info-value">{{ student.name }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Roll Number</span>
+            <span class="info-value">{{ student.roll_number }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Department</span>
+            <span class="info-value">{{ student.department }}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Graduation</span>
+            <span class="info-value">{% if student.graduation == 'PG' %}🟣 PG{% else %}🔵 Degree{% endif %}</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Academic Year</span>
+            <span class="info-value">{{ student.academic_year }}</span>
+        </div>
+    </div>
+
+    <!-- Records grouped by semester -->
+    {% if records %}
+        {% regroup records by semester as sem_list %}
+        {% for sem in sem_list %}
+        <div class="sem-section">
+            <div class="sem-header">
+                <span>📖 Semester {{ sem.grouper }}</span>
+                <a href="/academic/semester/{{ student.id }}/{{ sem.grouper }}/">Go to Semester →</a>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Subject</th>
+                            <th>Internal</th>
+                            <th>Assignments</th>
+                            <th>External</th>
+                            <th>Total</th>
+                            <th>Result</th>
+                            <th>Total Classes</th>
+                            <th>Attended</th>
+                            <th>Attendance %</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in sem.list %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td><strong>{{ record.subject }}</strong></td>
+                            <td>{{ record.internal_marks }}</td>
+                            <td>{{ record.assignments }}</td>
+                            <td>{{ record.external_marks }}</td>
+                            <td><strong>{{ record.total_marks }}</strong></td>
+                            <td>
+                                {% if record.result == 'Pass' %}
+                                <span class="badge-pass">✅ Pass</span>
+                                {% else %}
+                                <span class="badge-fail">❌ {{ record.result }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ record.total_classes }}</td>
+                            <td>{{ record.attended_classes }}</td>
+                            <td>
+                                {% if record.attendance_percentage >= 75 %}
+                                <span class="att-good">{{ record.attendance_percentage }}%</span>
+                                {% else %}
+                                <span class="att-low">{{ record.attendance_percentage }}% ⚠️</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a class="btn-edit" href="/academic/edit/{{ record.id }}/">✏️ Edit</a>
+                                <form method="POST" action="/academic/delete/{{ record.id }}/" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-delete" onclick="return confirm('Delete this record?')">🗑️</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="sem-summary">
+                    📊 Semester {{ sem.grouper }} — {{ sem.list|length }} subject(s) &nbsp;|&nbsp;
+                    Pass: {{ sem.list|length }} subjects recorded
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+    <div class="no-records">
+        <div class="icon">📭</div>
+        <p>No academic records found for {{ student.name }}.</p>
+        <p style="margin-top:0.5rem; font-size:0.9rem;">
+            Go to <a href="/academic/semester/{{ student.id }}/1/" style="color:#1976D2;">Semester 1</a> to start adding records.
+        </p>
+    </div>
+    {% endif %}
+
 </div>
 </body>
 </html>
