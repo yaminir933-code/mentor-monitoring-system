@@ -73,9 +73,11 @@ def register_view(request):
             except Exception as e:
                 error = f'Error creating account: {str(e)}'
         else:
-            # Get the first error message
-            if form.errors:
-                error = list(form.errors.values())[0][0]
+            # Get the most relevant error message with field context
+            for field in ['name', 'email', 'phone', 'department', 'password', 'confirm_password', '__all__']:
+                if field in form.errors:
+                    error = form.errors[field][0]
+                    break
     
     return render(request, 'register.html', {'error': error})
 

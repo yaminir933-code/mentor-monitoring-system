@@ -52,7 +52,7 @@ class SignUpForm(forms.Form):
             'class': 'form-control',
             'placeholder': 'Enter your full name',
             'required': 'required',
-            'pattern': '[a-zA-Z\\s]+'
+            'pattern': '[a-zA-Z\\s\\.\\-]+'
         })
     )
 
@@ -116,11 +116,11 @@ class SignUpForm(forms.Form):
         name = self.cleaned_data.get('name')
         if not name:
             raise ValidationError('Full name is required.')
-        if not re.match(r'^[a-zA-Z\s]+$', name):
-            raise ValidationError('Name should contain only letters and spaces.')
-        if len(name) < 2:
+        if not re.match(r'^[a-zA-Z\s\.\-]+$', name):
+            raise ValidationError('Name should contain only letters, spaces, dots, or hyphens.')
+        if len(name.strip()) < 2:
             raise ValidationError('Name must be at least 2 characters.')
-        return name
+        return name.strip()
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
