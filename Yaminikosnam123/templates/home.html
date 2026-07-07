@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MentorApp - Kasturba Gandhi Degree & PG College for Women</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -125,11 +121,6 @@
             font-weight: 700;
             color: white;
             text-decoration: none;
-            letter-spacing: 0.5px;
-        }
-
-        .logo-icon {
-            margin-right: 0.5rem;
         }
 
         .nav-links {
@@ -147,9 +138,7 @@
             font-size: 0.95rem;
         }
 
-        .nav-links a:hover {
-            color: #ffffff;
-        }
+        .nav-links a:hover { color: #ffffff; }
 
         .btn-login {
             background: #2d5a7b;
@@ -158,15 +147,13 @@
             border-radius: 6px;
             font-weight: 600;
             text-decoration: none;
-            transition: all 0.3s;
             border: 1px solid #3d6a8b;
+            transition: all 0.3s;
         }
 
-        .btn-login:hover {
-            background: #3d7a9b;
-        }
+        .btn-login:hover { background: #3d7a9b; }
 
-        /* Hero Section with college building photo */
+        /* Hero Section */
         .hero {
             position: relative;
             color: white;
@@ -192,7 +179,7 @@
             max-width: 800px;
         }
 
-        .hero-content .college-tag {
+        .college-tag {
             display: inline-block;
             background: rgba(255,255,255,0.15);
             border: 1px solid rgba(255,255,255,0.4);
@@ -209,8 +196,6 @@
             font-size: 2.8rem;
             margin-bottom: 1rem;
             font-weight: 700;
-            letter-spacing: -0.5px;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.4);
         }
 
         .hero-content p {
@@ -219,7 +204,6 @@
             opacity: 0.95;
             max-width: 680px;
             line-height: 1.8;
-            text-shadow: 0 1px 4px rgba(0,0,0,0.3);
         }
 
         .hero-buttons {
@@ -237,8 +221,6 @@
             font-weight: 700;
             text-decoration: none;
             transition: all 0.3s;
-            border: none;
-            cursor: pointer;
             font-size: 1rem;
         }
 
@@ -254,15 +236,12 @@
             border-radius: 6px;
             font-weight: 700;
             text-decoration: none;
-            transition: all 0.3s;
             border: 2px solid white;
             font-size: 1rem;
+            transition: all 0.3s;
         }
 
-        .btn-secondary:hover {
-            background: white;
-            color: #1a3a52;
-        }
+        .btn-secondary:hover { background: white; color: #1a3a52; }
 
         /* About Section */
         .about {
@@ -296,17 +275,9 @@
             margin-bottom: 1rem;
         }
 
-        .about-highlights {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
+        .about-highlights { display: flex; flex-direction: column; gap: 1rem; }
 
-        .highlight-item {
-            display: flex;
-            gap: 1rem;
-            align-items: flex-start;
-        }
+        .highlight-item { display: flex; gap: 1rem; align-items: flex-start; }
 
         .highlight-icon {
             width: 40px;
@@ -321,28 +292,13 @@
             flex-shrink: 0;
         }
 
-        .highlight-content h3 {
-            color: #1a3a52;
-            font-size: 1.1rem;
-            margin-bottom: 0.3rem;
-        }
-
-        .highlight-content p {
-            color: #666;
-            font-size: 0.95rem;
-            margin: 0;
-        }
+        .highlight-content h3 { color: #1a3a52; font-size: 1.1rem; margin-bottom: 0.3rem; }
+        .highlight-content p { color: #666; font-size: 0.95rem; margin: 0; }
 
         /* Features Section */
-        .features {
-            padding: 4rem 2rem;
-            background: white;
-        }
+        .features { padding: 4rem 2rem; background: white; }
 
-        .features-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+        .features-container { max-width: 1200px; margin: 0 auto; }
 
         .features h2 {
             font-size: 2rem;
@@ -371,22 +327,9 @@
             box-shadow: 0 8px 25px rgba(0,0,0,0.1);
         }
 
-        .feature-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .feature-card h3 {
-            color: #1a3a52;
-            font-size: 1.2rem;
-            margin-bottom: 0.8rem;
-        }
-
-        .feature-card p {
-            color: #666;
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
+        .feature-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+        .feature-card h3 { color: #1a3a52; font-size: 1.2rem; margin-bottom: 0.8rem; }
+        .feature-card p { color: #666; font-size: 0.95rem; line-height: 1.6; }
 
         /* CTA Section */
         .cta {
@@ -396,16 +339,8 @@
             text-align: center;
         }
 
-        .cta h2 {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        .cta p {
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
-            opacity: 0.95;
-        }
+        .cta h2 { font-size: 2rem; margin-bottom: 1rem; }
+        .cta p { font-size: 1.1rem; margin-bottom: 2rem; opacity: 0.95; }
 
         /* Footer */
         footer {
@@ -416,85 +351,27 @@
             border-top: 1px solid #2d5a7b;
         }
 
-        footer p {
-            margin: 0.3rem 0;
-            font-size: 0.9rem;
-        }
-
-        footer .college-name {
-            font-weight: 700;
-            color: white;
-            font-size: 1rem;
-        }
+        footer p { margin: 0.3rem 0; font-size: 0.9rem; }
+        footer .college-name { font-weight: 700; color: white; font-size: 1rem; }
 
         /* Responsive */
         @media (max-width: 768px) {
-            .college-header {
-                flex-direction: column;
-                text-align: center;
-                padding: 1rem;
-                gap: 0.8rem;
-            }
-
-            .college-info h1 {
-                font-size: 1rem;
-            }
-
-            .college-logo-placeholder {
-                width: 55px;
-                height: 55px;
-                font-size: 1.4rem;
-            }
-
-            .hero-content h1 {
-                font-size: 2rem;
-            }
-
-            .hero-content p {
-                font-size: 1rem;
-            }
-
-            .hero-buttons {
-                flex-direction: column;
-            }
-
-            .btn-primary, .btn-secondary {
-                width: 100%;
-            }
-
-            .about-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .nav-links {
-                gap: 1rem;
-                font-size: 0.85rem;
-            }
+            .college-header { flex-direction: column; text-align: center; padding: 1rem; gap: 0.8rem; }
+            .college-info h1 { font-size: 1rem; }
+            .college-logo-placeholder { width: 55px; height: 55px; font-size: 1.4rem; }
+            .hero-content h1 { font-size: 2rem; }
+            .hero-content p { font-size: 1rem; }
+            .hero-buttons { flex-direction: column; }
+            .btn-primary, .btn-secondary { width: 100%; }
+            .about-grid { grid-template-columns: 1fr; }
+            .nav-links { gap: 1rem; }
         }
 
         @media (max-width: 480px) {
-            nav {
-                padding: 1rem;
-                flex-wrap: wrap;
-            }
-
-            .logo {
-                font-size: 1.1rem;
-            }
-
-            .nav-links {
-                width: 100%;
-                margin-top: 1rem;
-                justify-content: center;
-            }
-
-            .hero {
-                min-height: 60vh;
-            }
-
-            .hero-content h1 {
-                font-size: 1.5rem;
-            }
+            nav { padding: 1rem; flex-wrap: wrap; }
+            .nav-links { width: 100%; margin-top: 1rem; justify-content: center; }
+            .hero { min-height: 60vh; }
+            .hero-content h1 { font-size: 1.5rem; }
         }
     </style>
 </head>
@@ -518,7 +395,7 @@
 
     <!-- Navigation -->
     <nav>
-        <a href="/" class="logo"><span class="logo-icon">🎓</span>MentorApp</a>
+        <a href="/" class="logo">🎓 MentorApp</a>
         <ul class="nav-links">
             <li><a href="#about">About</a></li>
             <li><a href="#features">Features</a></li>
@@ -546,8 +423,8 @@
             <h2>About Our Mentorship Platform</h2>
             <div class="about-grid">
                 <div class="about-text">
-                    <p>MentorApp is designed specifically for the Kasturba Gandhi Degree &amp; PG College for Women community to foster meaningful connections between students and mentors.</p>
-                    <p>Whether you're seeking guidance on your career path, academic challenges, or personal development, MentorApp connects you with experienced mentors who have successfully navigated similar journeys.</p>
+                    <p>This platform is designed specifically for the Kasturba Gandhi Degree &amp; PG College for Women community to foster meaningful connections between students and mentors.</p>
+                    <p>Whether you're seeking guidance on your career path, academic challenges, or personal development, our platform connects you with experienced mentors who have successfully navigated similar journeys.</p>
                 </div>
                 <div class="about-highlights">
                     <div class="highlight-item">
@@ -633,492 +510,8 @@
     <footer>
         <p class="college-name">Kasturba Gandhi Degree &amp; PG College for Women</p>
         <p>West Marredpally, Secunderabad, Telangana - 500026</p>
-        <p style="margin-top:0.6rem;">&copy; 2024 MentorApp &nbsp;|&nbsp; NAAC Accredited A+ (4th Cycle)</p>
+        <p style="margin-top:0.6rem;">&copy; 2025 MentorApp &nbsp;|&nbsp; NAAC Accredited A+ (4th Cycle)</p>
     </footer>
 
-</body>
-</html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MentorApp - College Mentorship Platform</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background: #ffffff;
-        }
-
-        /* Navigation */
-        nav {
-            background: #1a3a52;
-            padding: 1.2rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .logo {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: white;
-            text-decoration: none;
-            letter-spacing: 0.5px;
-        }
-
-        .logo-icon {
-            margin-right: 0.5rem;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-            list-style: none;
-        }
-
-        .nav-links a {
-            color: #e0e0e0;
-            text-decoration: none;
-            transition: color 0.3s;
-            font-weight: 500;
-            font-size: 0.95rem;
-        }
-
-        .nav-links a:hover {
-            color: #ffffff;
-        }
-
-        .btn-login {
-            background: #2d5a7b;
-            color: white;
-            padding: 0.7rem 1.5rem;
-            border-radius: 6px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s;
-            border: 1px solid #3d6a8b;
-        }
-
-        .btn-login:hover {
-            background: #1a3a52;
-            border-color: #5a7f99;
-        }
-
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(135deg, #1a3a52 0%, #2d5a7b 100%);
-            color: white;
-            padding: 6rem 2rem;
-            text-align: center;
-            min-height: 70vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .hero-content h1 {
-            font-size: 2.8rem;
-            margin-bottom: 1rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-
-        .hero-content p {
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
-            opacity: 0.95;
-            max-width: 700px;
-            line-height: 1.8;
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: 1.2rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .btn-primary {
-            background: white;
-            color: #1a3a52;
-            padding: 1rem 2rem;
-            border-radius: 6px;
-            font-weight: 700;
-            text-decoration: none;
-            transition: all 0.3s;
-            border: none;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-        }
-
-        .btn-secondary {
-            background: transparent;
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 6px;
-            font-weight: 700;
-            text-decoration: none;
-            transition: all 0.3s;
-            border: 2px solid white;
-            font-size: 1rem;
-        }
-
-        .btn-secondary:hover {
-            background: white;
-            color: #1a3a52;
-        }
-
-        /* About Section */
-        .about {
-            padding: 4rem 2rem;
-            background: #f8f9fa;
-        }
-
-        .about-container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        .about h2 {
-            font-size: 2rem;
-            margin-bottom: 1.5rem;
-            color: #1a3a52;
-            text-align: center;
-        }
-
-        .about-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-            align-items: center;
-        }
-
-        .about-text p {
-            color: #555;
-            font-size: 1rem;
-            line-height: 1.8;
-            margin-bottom: 1rem;
-        }
-
-        .about-highlights {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .highlight-item {
-            display: flex;
-            gap: 1rem;
-            align-items: flex-start;
-        }
-
-        .highlight-icon {
-            width: 40px;
-            height: 40px;
-            background: #2d5a7b;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            flex-shrink: 0;
-        }
-
-        .highlight-content h3 {
-            color: #1a3a52;
-            font-size: 1.1rem;
-            margin-bottom: 0.3rem;
-        }
-
-        .highlight-content p {
-            color: #666;
-            font-size: 0.95rem;
-            margin: 0;
-        }
-
-        /* Features Section */
-        .features {
-            padding: 4rem 2rem;
-            background: white;
-        }
-
-        .features-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .features h2 {
-            font-size: 2rem;
-            margin-bottom: 3rem;
-            color: #1a3a52;
-            text-align: center;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 2rem;
-        }
-
-        .feature-card {
-            background: #f8f9fa;
-            padding: 2rem;
-            border-radius: 8px;
-            text-align: center;
-            transition: all 0.3s;
-            border-left: 4px solid #2d5a7b;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-        }
-
-        .feature-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .feature-card h3 {
-            color: #1a3a52;
-            font-size: 1.2rem;
-            margin-bottom: 0.8rem;
-        }
-
-        .feature-card p {
-            color: #666;
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-
-        /* CTA Section */
-        .cta {
-            background: linear-gradient(135deg, #1a3a52 0%, #2d5a7b 100%);
-            color: white;
-            padding: 3rem 2rem;
-            text-align: center;
-        }
-
-        .cta h2 {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        .cta p {
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
-            opacity: 0.95;
-        }
-
-        /* Footer */
-        footer {
-            background: #1a3a52;
-            color: #e0e0e0;
-            padding: 2rem;
-            text-align: center;
-            border-top: 1px solid #2d5a7b;
-        }
-
-        footer p {
-            margin: 0.5rem 0;
-            font-size: 0.95rem;
-        }
-
-        footer .college-name {
-            font-weight: 600;
-            color: white;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero-content h1 {
-                font-size: 2rem;
-            }
-
-            .hero-content p {
-                font-size: 1rem;
-            }
-
-            .hero-buttons {
-                flex-direction: column;
-            }
-
-            .btn-primary, .btn-secondary {
-                width: 100%;
-            }
-
-            .about-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .nav-links {
-                gap: 1rem;
-                font-size: 0.85rem;
-            }
-
-            .features h2, .about h2 {
-                font-size: 1.5rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            nav {
-                padding: 1rem;
-                flex-wrap: wrap;
-            }
-
-            .logo {
-                font-size: 1.1rem;
-            }
-
-            .nav-links {
-                width: 100%;
-                margin-top: 1rem;
-                justify-content: center;
-            }
-
-            .hero {
-                padding: 3rem 1rem;
-            }
-
-            .hero-content h1 {
-                font-size: 1.5rem;
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- Navigation -->
-    <nav>
-        <a href="/" class="logo"><span class="logo-icon">🎓</span>MentorApp</a>
-        <ul class="nav-links">
-            <li><a href="#about">About</a></li>
-            <li><a href="#features">Features</a></li>
-            <li><a href="/login/" class="btn-login">Login</a></li>
-        </ul>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1>College Mentorship Platform</h1>
-            <p>Connect students with experienced mentors from our institution. Receive personalized guidance for academic excellence, career development, and personal growth.</p>
-            <div class="hero-buttons">
-                <a href="/register/" class="btn-primary">Create Account</a>
-                <a href="/login/" class="btn-secondary">Sign In</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- About Section -->
-    <section class="about" id="about">
-        <div class="about-container">
-            <h2>About MentorApp</h2>
-            <div class="about-grid">
-                <div class="about-text">
-                    <p>MentorApp is designed specifically for our college community to foster meaningful connections between students and mentors. Our platform bridges the gap between academic learning and professional development.</p>
-                    <p>Whether you're seeking guidance on your career path, academic challenges, or personal development, MentorApp connects you with experienced mentors who have successfully navigated similar journeys.</p>
-                </div>
-                <div class="about-highlights">
-                    <div class="highlight-item">
-                        <div class="highlight-icon">✓</div>
-                        <div class="highlight-content">
-                            <h3>Expert Mentors</h3>
-                            <p>Faculty and alumni mentors with industry experience</p>
-                        </div>
-                    </div>
-                    <div class="highlight-item">
-                        <div class="highlight-icon">✓</div>
-                        <div class="highlight-content">
-                            <h3>Structured Guidance</h3>
-                            <p>Personalized mentorship plans tailored to your goals</p>
-                        </div>
-                    </div>
-                    <div class="highlight-item">
-                        <div class="highlight-icon">✓</div>
-                        <div class="highlight-content">
-                            <h3>Progress Tracking</h3>
-                            <p>Monitor your growth with analytics and insights</p>
-                        </div>
-                    </div>
-                    <div class="highlight-item">
-                        <div class="highlight-icon">✓</div>
-                        <div class="highlight-content">
-                            <h3>Placement Support</h3>
-                            <p>Career guidance and placement assistance</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features" id="features">
-        <div class="features-container">
-            <h2>Key Features</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">👨‍🏫</div>
-                    <h3>Mentorship</h3>
-                    <p>Get one-on-one guidance from experienced mentors in your field of interest.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📊</div>
-                    <h3>Analytics</h3>
-                    <p>Track your academic performance and career readiness with detailed insights.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🎯</div>
-                    <h3>Goal Setting</h3>
-                    <p>Define and achieve your educational and career objectives with mentor support.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">💼</div>
-                    <h3>Career Guidance</h3>
-                    <p>Receive expert advice on internships, placements, and professional development.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🏆</div>
-                    <h3>Success Stories</h3>
-                    <p>Learn from and celebrate the achievements of our community members.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🤝</div>
-                    <h3>Networking</h3>
-                    <p>Build meaningful connections with peers, mentors, and alumni.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="cta">
-        <h2>Ready to Start Your Mentorship Journey?</h2>
-        <p>Join hundreds of students transforming their careers through mentorship</p>
-        <a href="/register/" class="btn-primary">Get Started Today</a>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2024 MentorApp | <span class="college-name">Kasturba Gandhi College</span></p>
-        <p>Empowering students through mentorship and guidance</p>
-    </footer>
 </body>
 </html>
