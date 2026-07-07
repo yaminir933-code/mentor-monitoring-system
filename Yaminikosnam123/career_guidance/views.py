@@ -5,15 +5,27 @@ from .models import CareerProfile, HigherStudiesRecord, PlacementRecord
 
 @login_required(login_url='/login')
 def career_home(request):
-    students = Student.objects.all().order_by('name')  # Show all students for now
+    from mentorapp.academic_years import ACADEMIC_YEARS
+    selected_year = request.GET.get('year', '')
+
+    # Only show this mentor's students
+    students_qs = Student.objects.filter(mentor=request.user).order_by('department', 'name')
+    if selected_year:
+        students_qs = students_qs.filter(academic_year=selected_year)
+
     student_data = []
-    for student in students:
+    for student in students_qs:
         try:
             profile = CareerProfile.objects.get(student=student)
         except CareerProfile.DoesNotExist:
             profile = None
         student_data.append({'student': student, 'profile': profile})
-    return render(request, 'career/home.html', {'student_data': student_data})
+
+    return render(request, 'career/home.html', {
+        'student_data': student_data,
+        'selected_year': selected_year,
+        'academic_years': ACADEMIC_YEARS,
+    })
 
 @login_required(login_url='/login')
 def career_profile(request, student_id):

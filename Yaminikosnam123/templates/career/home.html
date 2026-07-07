@@ -31,9 +31,30 @@ tr:hover td { background: #fce4ec; }
   <a href="/dashboard">← Back to Dashboard</a>
 </div>
 <div class="container">
-  <h2>💼 Career Guidance</h2>
-  <a class="report-btn" href="/career/report">📊 View Report</a>
-  <br><br>
+  <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem;">
+    <h2>💼 Career Guidance</h2>
+    <a class="report-btn" href="/career/report">📊 View Report</a>
+  </div>
+
+  <!-- Year Filter -->
+  <div style="background:white; border-radius:10px; padding:1rem 1.5rem; margin-bottom:1.8rem; box-shadow:0 2px 8px rgba(0,0,0,0.07); display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+    <label style="font-weight:600; color:#333; font-size:0.95rem;">📅 Filter by Academic Year:</label>
+    <form method="GET" style="display:flex; gap:0.8rem; align-items:center; flex-wrap:wrap;">
+      <select name="year" style="padding:0.55rem 1rem; border:2px solid #e0e0e0; border-radius:8px; font-size:0.95rem; color:#333; min-width:140px;">
+        <option value="">All Years</option>
+        {% for year in academic_years %}
+        <option value="{{ year }}" {% if selected_year == year %}selected{% endif %}>{{ year }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit" style="background:#9C27B0; color:white; border:none; padding:0.55rem 1.2rem; border-radius:8px; font-size:0.9rem; font-weight:600; cursor:pointer;">🔍 Filter</button>
+      {% if selected_year %}
+      <a href="/career/" style="background:#f5f5f5; color:#666; border:2px solid #e0e0e0; padding:0.5rem 1rem; border-radius:8px; font-size:0.9rem; font-weight:600; text-decoration:none;">✕ Clear</a>
+      {% endif %}
+    </form>
+    {% if selected_year %}
+    <span style="margin-left:auto; background:#f3e5f5; color:#6a1b9a; padding:0.4rem 1rem; border-radius:20px; font-size:0.85rem; font-weight:600;">Showing: {{ selected_year }}</span>
+    {% endif %}
+  </div>
 
   {% regroup student_data by student.department as dept_list %}
   {% for dept in dept_list %}
@@ -75,7 +96,7 @@ tr:hover td { background: #fce4ec; }
     </table>
   </div>
   {% empty %}
-  <p class="empty">No students found. Please add students from Manage Students.</p>
+  <p class="empty">No students found{% if selected_year %} for {{ selected_year }}{% endif %}. Please add students from Manage Students.</p>
   {% endfor %}
 </div>
 </body>
