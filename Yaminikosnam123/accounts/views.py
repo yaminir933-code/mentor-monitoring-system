@@ -141,39 +141,36 @@ def forgot_password_view(request):
 def analytics_view(request):
     from django.db.models import Count, Avg
     import datetime
-    current_year = datetime.datetime.now().year
-    selected_year = request.GET.get('year', str(current_year))
-    
+
     all_students = Student.objects.filter(mentor=request.user)
-    
-    # Get available years from created_at and academic_year fields
-    years_from_created = all_students.filter(created_at__isnull=False).dates('created_at', 'year')
-    available_years = list(set([y.year for y in years_from_created]))
-    if current_year not in available_years:
-        available_years.append(current_year)
-    available_years = sorted(set(available_years), reverse=True)
-    
-    # Filter students by year
-    try:
-        year_int = int(selected_year)
-        if year_int == current_year:
-            students = all_students
-        else:
-            students = all_students.filter(created_at__year=year_int)
-    except ValueError:
+
+    # Get all distinct academic years from actual student data
+    academic_years = list(
+        all_students.values_list('academic_year', flat=True)
+        .distinct().order_by('academic_year')
+    )
+
+    # Selected year from GET param, default to latest available year
+    selected_year = request.GET.get('year', '')
+    if not selected_year and academic_years:
+        selected_year = academic_years[-1]
+
+    # Filter students by academic_year
+    if selected_year and selected_year != 'all':
+        students = all_students.filter(academic_year=selected_year)
+    else:
         students = all_students
-        selected_year = str(current_year)
-    
+
     # ===== ANALYTICS DASHBOARD DATA =====
     total_students = students.count()
     total_degree = students.filter(graduation='Degree').count()
     total_pg = students.filter(graduation='PG').count()
-    
+
     higher_studies = 0
     job_placement = 0
     undecided = 0
     total_placed = 0
-    
+
     for student in students:
         try:
             profile = CareerProfile.objects.get(student=student)
@@ -188,29 +185,27 @@ def analytics_view(request):
                 undecided += 1
         except CareerProfile.DoesNotExist:
             undecided += 1
-    
+
     # Activity data
-    activity_active = ActivityRecord.objects.filter(student__in=students, participation_status='Active').count()
+    activity_active    = ActivityRecord.objects.filter(student__in=students, participation_status='Active').count()
     activity_completed = ActivityRecord.objects.filter(student__in=students, participation_status='Completed').count()
-    activity_ongoing = ActivityRecord.objects.filter(student__in=students, participation_status='Ongoing').count()
-    activity_not = ActivityRecord.objects.filter(student__in=students, participation_status='Not Participating').count()
-    
+    activity_ongoing   = ActivityRecord.objects.filter(student__in=students, participation_status='Ongoing').count()
+    activity_not       = ActivityRecord.objects.filter(student__in=students, participation_status='Not Participating').count()
+
     # Department and marks data
-    dept_data = students.values('department').annotate(count=Count('id')).order_by('-count')
+    dept_data  = students.values('department').annotate(count=Count('id')).order_by('-count')
     marks_data = AcademicRecord.objects.filter(student__in=students).values('semester').annotate(avg=Avg('total_marks')).order_by('semester')
     marks_data = [{'semester': m['semester'], 'avg': round(m['avg'], 1)} for m in marks_data]
-    
+
     # ===== SUCCESS ANALYTICS DATA =====
-    # Student stages
-    enrolled = students.filter(stage='enrolled').count()
-    active = students.filter(stage='active').count()
-    at_risk = students.filter(stage='at_risk').count()
-    supply = students.filter(stage='supply').count()
-    cleared = students.filter(stage='cleared').count()
+    enrolled     = students.filter(stage='enrolled').count()
+    active       = students.filter(stage='active').count()
+    at_risk      = students.filter(stage='at_risk').count()
+    supply       = students.filter(stage='supply').count()
+    cleared      = students.filter(stage='cleared').count()
     career_ready = students.filter(stage='career_ready').count()
-    graduated = students.filter(stage='graduated').count()
-    
-    # Career outcomes
+    graduated    = students.filter(stage='graduated').count()
+
     placed = 0
     higher = 0
     still_looking = 0
@@ -227,36 +222,45 @@ def analytics_view(request):
                 higher += 1
         except CareerProfile.DoesNotExist:
             pass
-    
-    successful = placed + higher + graduated
+
+    successful   = placed + higher + graduated
     success_rate = round((successful / total_students) * 100) if total_students > 0 else 0
-    
-    # Year-wise data for trends
+
+    # ===== ALL-YEARS COMPARISON DATA =====
     year_data = []
-    for year in available_years:
-        yr_students = all_students.filter(created_at__year=year)
-        yr_total = yr_students.count()
-        yr_placed = 0
-        yr_higher = 0
+    for yr in academic_years:
+        yr_students = all_students.filter(academic_year=yr)
+        yr_total    = yr_students.count()
+        yr_placed   = 0
+        yr_higher   = 0
+        yr_active   = yr_students.filter(stage='active').count()
+        yr_at_risk  = yr_students.filter(stage='at_risk').count()
         for s in yr_students:
             try:
                 p = CareerProfile.objects.get(student=s)
                 if p.career_path == 'job_placement':
-                    pl = PlacementRecord.objects.filter(profile=p, placement_status='Placed').count()
-                    yr_placed += pl
+                    yr_placed += PlacementRecord.objects.filter(profile=p, placement_status='Placed').count()
                 elif p.career_path == 'higher_studies':
                     yr_higher += 1
             except CareerProfile.DoesNotExist:
                 pass
         yr_success = yr_placed + yr_higher
-        yr_rate = round((yr_success / yr_total) * 100) if yr_total > 0 else 0
-        year_data.append({'year': year, 'total': yr_total, 'placed': yr_placed, 'higher': yr_higher, 'success_rate': yr_rate})
-    
-    # Degree vs PG placement data
+        yr_rate    = round((yr_success / yr_total) * 100) if yr_total > 0 else 0
+        year_data.append({
+            'year': yr,
+            'total': yr_total,
+            'placed': yr_placed,
+            'higher': yr_higher,
+            'active': yr_active,
+            'at_risk': yr_at_risk,
+            'success_rate': yr_rate,
+        })
+
+    # Degree vs PG placement
     degree_students = students.filter(graduation='Degree')
-    pg_students = students.filter(graduation='PG')
-    degree_placed = 0
-    pg_placed = 0
+    pg_students     = students.filter(graduation='PG')
+    degree_placed   = 0
+    pg_placed       = 0
     for s in degree_students:
         try:
             p = CareerProfile.objects.get(student=s)
@@ -287,7 +291,7 @@ def analytics_view(request):
         'activity_not': activity_not,
         'dept_data': dept_data,
         'marks_data': marks_data,
-        
+
         # Success Analytics Data
         'enrolled': enrolled,
         'active': active,
@@ -305,11 +309,11 @@ def analytics_view(request):
         'pg_total': pg_students.count(),
         'degree_placed': degree_placed,
         'pg_placed': pg_placed,
-        
+
         # Common Data
         'selected_year': selected_year,
-        'available_years': available_years,
-        'current_year': current_year,
+        'available_years': academic_years,
+        'academic_years': academic_years,
     })
 
 
