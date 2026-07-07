@@ -1,72 +1,352 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Meeting Tracking</title>
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: Arial; background: #f0f2f5; }
-.navbar { background: #4CAF50; padding: 1rem 2rem; color: white; display: flex; justify-content: space-between; align-items: center; }
-.navbar a { color: white; text-decoration: none; }
-.container { padding: 2rem; max-width: 1100px; margin: auto; }
-h2 { color: #333; margin-bottom: 1.5rem; }
-.dept-section { margin-bottom: 2rem; }
-.dept-title { background: #4CAF50; color: white; padding: 0.8rem 1.2rem; border-radius: 8px 8px 0 0; font-weight: bold; }
-table { width: 100%; background: white; border-collapse: collapse; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-radius: 0 0 12px 12px; overflow: hidden; }
-th { background: #e8f5e9; color: #2e7d32; padding: 12px 15px; text-align: left; font-size: 0.85rem; }
-td { padding: 12px 15px; border-bottom: 1px solid #f0f0f0; color: #555; font-size: 0.85rem; }
-tr:last-child td { border-bottom: none; }
-tr:hover td { background: #f9f9f9; }
-.btn-add { background: #4CAF50; color: white; padding: 5px 12px; border-radius: 6px; text-decoration: none; font-size: 0.8rem; margin-right: 5px; }
-.btn-view { background: #1976D2; color: white; padding: 5px 12px; border-radius: 6px; text-decoration: none; font-size: 0.8rem; }
-.good { color: #4CAF50; font-weight: bold; }
-.bad { color: #e53935; font-weight: bold; }
-.empty { text-align: center; padding: 2rem; color: #999; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Tracking</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: #4CAF50;
+            padding: 1rem 2rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+
+        .navbar span { font-size: 1.1rem; font-weight: 700; }
+        .navbar a { color: white; text-decoration: none; font-size: 0.95rem; }
+        .navbar a:hover { text-decoration: underline; }
+
+        .container {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .page-header h2 {
+            font-size: 1.6rem;
+            color: #2e7d32;
+            font-weight: 700;
+        }
+
+        /* Year Filter */
+        .filter-bar {
+            background: white;
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.8rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            flex-wrap: wrap;
+        }
+
+        .filter-bar label {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.95rem;
+            white-space: nowrap;
+        }
+
+        .filter-bar select {
+            padding: 0.55rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: #333;
+            cursor: pointer;
+            transition: border-color 0.2s;
+            min-width: 140px;
+        }
+
+        .filter-bar select:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .btn-filter {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 0.55rem 1.2rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-filter:hover { background: #388E3C; }
+
+        .btn-clear {
+            background: #f5f5f5;
+            color: #666;
+            border: 2px solid #e0e0e0;
+            padding: 0.55rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-clear:hover { background: #eeeeee; }
+
+        .year-badge {
+            margin-left: auto;
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* Department sections */
+        .dept-section {
+            margin-bottom: 2rem;
+        }
+
+        .dept-title {
+            background: linear-gradient(135deg, #4CAF50, #388E3C);
+            color: white;
+            padding: 0.85rem 1.2rem;
+            border-radius: 10px 10px 0 0;
+            font-weight: 700;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .table-wrap {
+            background: white;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead th {
+            background: #f1f8e9;
+            color: #2e7d32;
+            padding: 11px 14px;
+            text-align: left;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            border-bottom: 2px solid #e8f5e9;
+        }
+
+        tbody td {
+            padding: 11px 14px;
+            border-bottom: 1px solid #f5f5f5;
+            color: #555;
+            font-size: 0.87rem;
+        }
+
+        tbody tr:last-child td { border-bottom: none; }
+        tbody tr:hover td { background: #f9fbe7; }
+
+        .badge-on-track {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-missed {
+            background: #fdecea;
+            color: #c62828;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .reg-good { color: #2e7d32; font-weight: 700; }
+        .reg-bad  { color: #c62828; font-weight: 700; }
+
+        .btn-add {
+            background: #4CAF50;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-right: 5px;
+            transition: background 0.2s;
+        }
+
+        .btn-add:hover { background: #388E3C; }
+
+        .btn-view {
+            background: #1976D2;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .btn-view:hover { background: #1565C0; }
+
+        .empty-state {
+            text-align: center;
+            padding: 3.5rem 2rem;
+            color: #999;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        }
+
+        .empty-state .icon { font-size: 3rem; margin-bottom: 1rem; }
+        .empty-state p { font-size: 1rem; }
+        .empty-state a {
+            display: inline-block;
+            margin-top: 1rem;
+            color: #4CAF50;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .filter-bar { flex-direction: column; align-items: flex-start; }
+            .year-badge { margin-left: 0; }
+            table { font-size: 0.8rem; }
+            thead th, tbody td { padding: 8px 10px; }
+        }
+    </style>
 </head>
 <body>
+
 <div class="navbar">
-  <span>🎓 MentorApp</span>
-  <a href="/dashboard">← Back to Dashboard</a>
+    <span>🎓 MentorApp</span>
+    <a href="/dashboard">← Back to Dashboard</a>
 </div>
+
 <div class="container">
-  <h2>📅 Meeting Tracking</h2>
-  {% regroup summary by student.department as dept_list %}
-  {% for dept in dept_list %}
-  <div class="dept-section">
-    <div class="dept-title">🏫 {{ dept.grouper }} — {{ dept.list|length }} Student(s)</div>
-    <table>
-      <tr>
-        <th>No.</th>
-        <th>Student</th>
-        <th>Roll No</th>
-        <th>Total Meetings</th>
-        <th>Last Meeting</th>
-        <th>Days Since</th>
-        <th>Status</th>
-        <th>Regularity %</th>
-        <th>Actions</th>
-      </tr>
-      {% for s in dept.list %}
-      <tr>
-        <td>{{ forloop.counter }}</td>
-        <td>{{ s.student.name }}</td>
-        <td>{{ s.student.roll_number }}</td>
-        <td>{{ s.total }}</td>
-        <td>{{ s.last_meeting|default:"No meetings" }}</td>
-        <td>{{ s.days_since|default:"-" }}</td>
-        <td>{% if s.missed %}<span class="bad">⚠️ Missed</span>{% else %}<span class="good">✅ On Track</span>{% endif %}</td>
-        <td>{% if s.regularity >= 80 %}<span class="good">{{ s.regularity }}%</span>{% else %}<span class="bad">{{ s.regularity }}%</span>{% endif %}</td>
-        <td>
-          <a class="btn-add" href="/meeting/add/{{ s.student.id }}">+ Add</a>
-          <a class="btn-view" href="/meeting/view/{{ s.student.id }}">View</a>
-        </td>
-      </tr>
-      {% endfor %}
-    </table>
-  </div>
-  {% empty %}
-  <p class="empty">No students found. Please add students from Manage Students.</p>
-  {% endfor %}
+
+    <div class="page-header">
+        <h2>📅 Meeting Tracking</h2>
+    </div>
+
+    <!-- Year Filter -->
+    <div class="filter-bar">
+        <label>📅 Filter by Academic Year:</label>
+        <form method="GET" style="display:flex; gap:0.8rem; align-items:center; flex-wrap:wrap;">
+            <select name="year">
+                <option value="">All Years</option>
+                {% for year in academic_years %}
+                <option value="{{ year }}" {% if selected_year == year %}selected{% endif %}>{{ year }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn-filter">🔍 Filter</button>
+            {% if selected_year %}
+            <a href="/meeting/" class="btn-clear">✕ Clear</a>
+            {% endif %}
+        </form>
+        {% if selected_year %}
+        <span class="year-badge">Showing: {{ selected_year }}</span>
+        {% endif %}
+    </div>
+
+    <!-- Student Table grouped by Department -->
+    {% regroup summary by student.department as dept_list %}
+    {% for dept in dept_list %}
+    <div class="dept-section">
+        <div class="dept-title">
+            🏫 {{ dept.grouper }} — {{ dept.list|length }} Student(s)
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Student</th>
+                        <th>Roll No</th>
+                        <th>Year</th>
+                        <th>Total Meetings</th>
+                        <th>Last Meeting</th>
+                        <th>Days Since</th>
+                        <th>Status</th>
+                        <th>Regularity</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in dept.list %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td><strong>{{ s.student.name }}</strong></td>
+                        <td>{{ s.student.roll_number }}</td>
+                        <td>{{ s.student.academic_year }}</td>
+                        <td>{{ s.total }}</td>
+                        <td>{{ s.last_meeting|default:"—" }}</td>
+                        <td>{{ s.days_since|default:"—" }}</td>
+                        <td>
+                            {% if s.missed %}
+                            <span class="badge-missed">⚠️ Missed</span>
+                            {% else %}
+                            <span class="badge-on-track">✅ On Track</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if s.regularity >= 80 %}
+                            <span class="reg-good">{{ s.regularity }}%</span>
+                            {% else %}
+                            <span class="reg-bad">{{ s.regularity }}%</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a class="btn-add" href="/meeting/add/{{ s.student.id }}">+ Add</a>
+                            <a class="btn-view" href="/meeting/view/{{ s.student.id }}">View</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% empty %}
+    <div class="empty-state">
+        <div class="icon">📭</div>
+        <p>No students found{% if selected_year %} for {{ selected_year }}{% endif %}.</p>
+        <a href="/students/">→ Add students from Manage Students</a>
+    </div>
+    {% endfor %}
+
 </div>
 </body>
 </html>

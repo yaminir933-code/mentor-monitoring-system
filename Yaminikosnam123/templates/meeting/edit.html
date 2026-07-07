@@ -1,24 +1,248 @@
 <!DOCTYPE html>
-<html>
-<head><title>Edit Meeting</title></head>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Meeting</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: #4CAF50;
+            padding: 1rem 2rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+
+        .navbar span { font-size: 1.1rem; font-weight: 700; }
+        .navbar a { color: white; text-decoration: none; font-size: 0.95rem; }
+        .navbar a:hover { text-decoration: underline; }
+
+        .container {
+            max-width: 680px;
+            margin: 2.5rem auto;
+            padding: 0 1rem;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .page-header h2 {
+            font-size: 1.6rem;
+            color: #2e7d32;
+            font-weight: 700;
+        }
+
+        .student-info {
+            background: #e8f5e9;
+            border-left: 4px solid #4CAF50;
+            border-radius: 8px;
+            padding: 0.9rem 1.2rem;
+            margin-bottom: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: #2e7d32;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            padding: 2rem;
+        }
+
+        .error-msg {
+            background: #fdecea;
+            color: #c62828;
+            border-left: 4px solid #e53935;
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.4rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.45rem;
+            font-size: 0.92rem;
+        }
+
+        .form-group label span {
+            color: #e53935;
+            margin-left: 2px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            color: #333;
+            transition: border-color 0.25s, box-shadow 0.25s;
+            background: #fafafa;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.12);
+            background: #fff;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.8rem;
+            padding-top: 1.4rem;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .btn-update {
+            flex: 1;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 0.85rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+
+        .btn-update:hover {
+            background: #388E3C;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(76,175,80,0.3);
+        }
+
+        .btn-cancel {
+            background: #f5f5f5;
+            color: #555;
+            border: 2px solid #e0e0e0;
+            padding: 0.85rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.25s;
+        }
+
+        .btn-cancel:hover {
+            background: #eeeeee;
+            border-color: #bdbdbd;
+        }
+
+        @media (max-width: 600px) {
+            .form-row { grid-template-columns: 1fr; }
+            .form-actions { flex-direction: column; }
+            .card { padding: 1.4rem; }
+        }
+    </style>
+</head>
 <body>
-<h2>Edit Meeting</h2>
-{% if error %}<p style="color:red">{{ error }}</p>{% endif %}
-<form method="post">
-  {% csrf_token %}
-  <p>Date: <input type="date" name="date" value="{{ meeting.date }}" required></p>
-  <p>Meeting Type:
-    <select name="meeting_type">
-      <option value="academic" {% if meeting.meeting_type == 'academic' %}selected{% endif %}>Academic</option>
-      <option value="activity" {% if meeting.meeting_type == 'activity' %}selected{% endif %}>Activity</option>
-      <option value="career" {% if meeting.meeting_type == 'career' %}selected{% endif %}>Career</option>
-      <option value="general" {% if meeting.meeting_type == 'general' %}selected{% endif %}>General</option>
-    </select>
-  </p>
-  <p>Discussion: <textarea name="discussion">{{ meeting.discussion }}</textarea></p>
-  <p>Guidance: <textarea name="guidance">{{ meeting.guidance }}</textarea></p>
-  <p>Follow Up: <textarea name="follow_up">{{ meeting.follow_up }}</textarea></p>
-  <button type="submit">Update Meeting</button>
-</form>
+
+    <div class="navbar">
+        <span>🎓 MentorApp</span>
+        <a href="/meeting/view/{{ meeting.student.id }}">← Back to Meetings</a>
+    </div>
+
+    <div class="container">
+        <div class="page-header">
+            <h2>✏️ Edit Meeting</h2>
+        </div>
+
+        <div class="student-info">
+            👤 {{ meeting.student.name }} &nbsp;|&nbsp; 🎓 {{ meeting.student.department }} &nbsp;|&nbsp; 📋 {{ meeting.student.roll_number }}
+        </div>
+
+        <div class="card">
+            {% if error %}
+            <div class="error-msg">⚠️ {{ error }}</div>
+            {% endif %}
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="date">Date <span>*</span></label>
+                        <input type="date" id="date" name="date" value="{{ meeting.date }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="meeting_type">Meeting Type <span>*</span></label>
+                        <select id="meeting_type" name="meeting_type" required>
+                            <option value="academic" {% if meeting.meeting_type == 'academic' %}selected{% endif %}>📚 Academic</option>
+                            <option value="activity" {% if meeting.meeting_type == 'activity' %}selected{% endif %}>🏃 Activity</option>
+                            <option value="career"   {% if meeting.meeting_type == 'career'   %}selected{% endif %}>💼 Career</option>
+                            <option value="general"  {% if meeting.meeting_type == 'general'  %}selected{% endif %}>💬 General</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="discussion">Discussion <span>*</span></label>
+                    <textarea id="discussion" name="discussion" placeholder="What was discussed in this meeting?" required>{{ meeting.discussion }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="guidance">Guidance Provided</label>
+                    <textarea id="guidance" name="guidance" placeholder="What guidance was given to the student?">{{ meeting.guidance }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="follow_up">Follow Up Action</label>
+                    <textarea id="follow_up" name="follow_up" placeholder="What are the next steps or follow-up actions?">{{ meeting.follow_up }}</textarea>
+                </div>
+
+                <div class="form-actions">
+                    <a href="/meeting/view/{{ meeting.student.id }}" class="btn-cancel">Cancel</a>
+                    <button type="submit" class="btn-update">✅ Update Meeting</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 </body>
 </html>

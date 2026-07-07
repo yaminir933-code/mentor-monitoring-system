@@ -5,10 +5,17 @@ from datetime import date
 
 @login_required(login_url='/login')
 def meeting_home(request):
-    students = Student.objects.all().order_by('name')  # Show all students for now
+    from mentorapp.academic_years import ACADEMIC_YEARS
+    selected_year = request.GET.get('year', '')
+
+    # Only show this mentor's students, filtered by year if selected
+    students_qs = Student.objects.filter(mentor=request.user).order_by('department', 'name')
+    if selected_year:
+        students_qs = students_qs.filter(academic_year=selected_year)
+
     summary = []
     today = date.today()
-    for student in students:
+    for student in students_qs:
         meetings = Meeting.objects.filter(student=student).order_by('-date')
         total = meetings.count()
         missed = 0
@@ -29,8 +36,9 @@ def meeting_home(request):
             'days_since': days_since,
         })
     return render(request, 'meeting/home.html', {
-        'students': students,
-        'summary': summary
+        'summary': summary,
+        'selected_year': selected_year,
+        'academic_years': ACADEMIC_YEARS,
     })
 
 @login_required(login_url='/login')
