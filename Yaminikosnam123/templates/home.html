@@ -379,7 +379,10 @@
 
     <!-- College Header Banner -->
     <div class="college-header">
-        <div class="college-logo-placeholder">🎓</div>
+        <div class="college-logo-placeholder">
+            {% load static %}
+            <img src="{% static 'images/logo.png' %}" alt="KG College Logo" style="width:70px;height:70px;object-fit:contain;border-radius:50%;">
+        </div>
         <div class="college-info">
             <h1>Kasturba Gandhi Degree &amp; PG College for Women</h1>
             <div class="address">West Marredpally, Secunderabad, Telangana - 500026</div>
