@@ -69,7 +69,7 @@ tr:hover td{background:#fff8e1;}
       <td>{{ record.achievement|default:"-" }}</td>
       <td>
         {% if record.upload_file %}
-        <a href="{{ record.upload_file.url }}" target="_blank" class="btn-view">📎 View</a>
+        <a href="{{ record.get_upload_url }}" target="_blank" class="btn-view">📎 View</a>
         {% else %}<span style="color:#999;">No file</span>{% endif %}
       </td>
       <td>

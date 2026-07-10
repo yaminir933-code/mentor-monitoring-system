@@ -110,7 +110,7 @@ textarea { height: 80px; resize: vertical; }
       <div class="form-group">
         <label>📎 Upload Certificate / Photo / Video</label>
         {% if record.upload_file %}
-        <p style="color:#4CAF50;font-size:13px;">Current file: <a href="{{ record.upload_file.url }}" target="_blank">View current file</a></p>
+        <p style="color:#4CAF50;font-size:13px;">Current file: <a href="{{ record.get_upload_url }}" target="_blank">View current file</a></p>
         {% endif %}
         <input type="file" name="upload_file" accept=".pdf,.jpg,.jpeg,.png,.mp4,.gif"/>
         <small style="color:#777;">Leave empty to keep existing file</small>

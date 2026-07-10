@@ -1,5 +1,7 @@
 from django.db import models
 from meeting.models import Student
+from cloudinary_storage.storage import RawMediaCloudinaryStorage
+import cloudinary
 
 class SubjectCatalog(models.Model):
     """Predefined subjects for degree and PG programs"""
@@ -48,8 +50,27 @@ class Project(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     semester = models.IntegerField()
     name = models.CharField(max_length=200)
-    file = models.FileField(upload_to='projects/', blank=True, null=True)
+    file = models.FileField(
+        upload_to='projects/',
+        blank=True,
+        null=True,
+        storage=RawMediaCloudinaryStorage(),
+    )
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def get_file_url(self):
+        """Return the correct Cloudinary URL for the project file."""
+        if not self.file:
+            return None
+        try:
+            url, _ = cloudinary.utils.cloudinary_url(
+                self.file.name,
+                resource_type='raw',
+                secure=True,
+            )
+            return url
+        except Exception:
+            return None
 
     def __str__(self):
         return self.name

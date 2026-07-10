@@ -536,7 +536,7 @@ select[multiple] option:checked {
     <h3>🎯 Project Work</h3>
     {% if project %}
     <p><strong>Project Name:</strong> {{ project.name }}</p>
-    {% if project.file %}<p><a href="{{ project.file.url }}" target="_blank" class="btn-blue">📎 View File</a></p>{% endif %}
+    {% if project.file %}<p><a href="{{ project.get_file_url }}" target="_blank" class="btn-blue">📎 View File</a></p>{% endif %}
     <div style="margin-top: 12px; display: flex; gap: 8px;">
       <button onclick="openProjectEditModal({{ project.id }}, '{{ project.name }}', {{ project.file|yesno:'true,false' }})" class="btn-orange">✏️ Edit</button>
       <form method="POST" action="/academic/delete-project/{{ project.id }}/" style="display:inline;">
