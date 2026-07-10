@@ -129,6 +129,16 @@ cloudinary.config(
 )
 
 # Always use Cloudinary for media files — local /media/ is not persistent on Render
+if not all([CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET]):
+    import warnings
+    warnings.warn(
+        "Cloudinary credentials are missing (CLOUDINARY_CLOUD_NAME / CLOUDINARY_API_KEY / "
+        "CLOUDINARY_API_SECRET). Media file uploads and retrieval will NOT work. "
+        "Set these environment variables in your Render dashboard.",
+        RuntimeWarning,
+        stacklevel=2,
+    )
+
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'

@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -381,8 +382,8 @@
 
     <!-- College Header Banner -->
     <div class="college-header">
-        <div class="college-logo-placeholder" style="font-size:3.5rem;">
-            🎓
+        <div class="college-logo-placeholder">
+            <img src="{% static 'images/logo.png' %}" alt="KG College Logo" onerror="this.style.display='none';this.parentElement.innerHTML='🎓';" style="width:90px;height:90px;object-fit:contain;">
         </div>
         <div class="college-info">
             <h1>Kasturba Gandhi Degree &amp; PG College for Women</h1>
