@@ -3,50 +3,6 @@ from meeting.models import Student
 from cloudinary_storage.storage import RawMediaCloudinaryStorage
 import cloudinary
 
-
-def _build_cloudinary_url(file_name, cloud_name, resource_type='raw'):
-    """
-    Safely extract the Cloudinary public_id from whatever format is stored
-    in file.name, then return a guaranteed correct https:// URL.
-
-    Handles all of these stored formats:
-      - 'activity_uploads/Screenshot_abc.png'          (clean path)
-      - 'https://res.cloudinary.com/X/raw/upload/...'  (full URL)
-      - 'https/res.cloudinary.com/X/...'               (broken, no colon)
-      - 'res.cloudinary.com/X/...'                     (partial, no scheme)
-    """
-    if not file_name:
-        return None
-
-    name = file_name.strip()
-
-    # If a /upload/ separator exists, everything AFTER it is the public_id
-    if '/upload/' in name:
-        public_id = name.split('/upload/', 1)[1]
-    elif 'res.cloudinary.com' in name:
-        # No /upload/ found – strip everything up to and including the cloud_name
-        marker = f'/{cloud_name}/'
-        if marker in name:
-            remainder = name.split(marker, 1)[1]
-            # Strip resource-type prefix if present  e.g. 'image/', 'raw/'
-            for rt in ('image/', 'raw/', 'video/'):
-                if remainder.startswith(rt):
-                    remainder = remainder[len(rt):]
-                    break
-            public_id = remainder
-        else:
-            public_id = name
-    else:
-        # Plain path – use as-is
-        public_id = name
-
-    public_id = public_id.strip('/')
-    if not public_id:
-        return None
-
-    return f"https://res.cloudinary.com/{cloud_name}/{resource_type}/upload/{public_id}"
-
-
 class ActivityRecord(models.Model):
     ACTIVITY_TYPES = [
         ('Sports', 'Sports'),
@@ -93,14 +49,12 @@ class ActivityRecord(models.Model):
 
     def get_upload_url(self):
         """
-        Return a guaranteed https:// Cloudinary raw URL for the activity file.
-        Activity files are always stored as resource_type='raw'.
+        Return the native Cloudinary URL for the activity file.
         """
-        if not self.upload_file or not self.upload_file.name:
+        if not self.upload_file:
             return None
         try:
-            cloud_name = cloudinary.config().cloud_name or 'wltyf291'
-            return _build_cloudinary_url(self.upload_file.name, cloud_name, resource_type='raw')
+            return self.upload_file.url
         except Exception:
             return None
 

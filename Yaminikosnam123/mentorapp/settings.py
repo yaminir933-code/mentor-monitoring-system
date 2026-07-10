@@ -119,6 +119,11 @@ CLOUDINARY_STORAGE = {
     'CLOUD_NAME': CLOUDINARY_CLOUD_NAME,
     'API_KEY':    CLOUDINARY_API_KEY,
     'API_SECRET': CLOUDINARY_API_SECRET,
+    'MEDIA_TAG':  'media',   # tag applied to all media uploads
+    'INVALID_VIDEO_ERROR_MESSAGE': 'Please upload a valid video file.',
+    'EXCLUDE_DELETE_ORPHANED_MEDIA_PATHS': ('',),
+    'STATIC_TAG':         'static',
+    'STATICFILES_MANIFEST_ROOT': os.path.join(BASE_DIR, 'manifest'),
 }
 
 cloudinary.config(
@@ -140,7 +145,9 @@ if not all([CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET]):
     )
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-MEDIA_URL = f'https://res.cloudinary.com/{CLOUDINARY_CLOUD_NAME}/'
+# Keep MEDIA_URL as empty string so django-cloudinary-storage does NOT prepend
+# a folder prefix when building Cloudinary URLs and upload paths.
+MEDIA_URL = ''
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Security settings for production

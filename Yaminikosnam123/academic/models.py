@@ -98,15 +98,12 @@ class Project(models.Model):
 
     def get_file_url(self):
         """
-        Build a guaranteed https:// Cloudinary URL for the project file.
-        Files uploaded via MediaCloudinaryStorage use resource_type='image'.
-        URL format: https://res.cloudinary.com/{cloud}/image/upload/{name}
+        Return the native Cloudinary URL.
         """
-        if not self.file or not self.file.name:
+        if not self.file:
             return None
         try:
-            cloud_name = cloudinary.config().cloud_name or 'wltyf291'
-            return _build_cloudinary_url(self.file.name, cloud_name, resource_type='image')
+            return self.file.url
         except Exception:
             return None
 
