@@ -12,4 +12,9 @@ urlpatterns = [
     path('academic/', include('academic.urls')),
     path('activity/', include('activity.urls')),
     path('career/', include('career_guidance.urls')),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
+
+# Serve media files locally only in development (DEBUG=True)
+# In production, files are served from Cloudinary
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
