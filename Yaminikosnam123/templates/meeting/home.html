@@ -221,6 +221,45 @@
 
         .btn-view:hover { background: #1565C0; }
 
+        /* Bulk assign buttons */
+        .btn-bulk-all {
+            background: #FF6F00;
+            color: white;
+            padding: 0.55rem 1.2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 700;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+        .btn-bulk-all:hover { background: #E65100; }
+
+        .btn-bulk-dept {
+            background: #F57C00;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 700;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+        .btn-bulk-dept:hover { background: #E65100; }
+
+        /* Success flash banner */
+        .bulk-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #a5d6a7;
+            border-radius: 8px;
+            padding: 0.75rem 1.2rem;
+            margin-bottom: 1.2rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
         .empty-state {
             text-align: center;
             padding: 3.5rem 2rem;
@@ -260,7 +299,15 @@
 
     <div class="page-header">
         <h2>📅 Meeting Tracking</h2>
+        <a href="/meeting/bulk-add/" class="btn-bulk-all">📋 Assign Meeting to All Students</a>
     </div>
+
+    <!-- Bulk assign success banner -->
+    {% if request.GET.bulk_success %}
+    <div class="bulk-success">
+        ✅ Meeting successfully assigned to {{ request.GET.bulk_success }} student(s).
+    </div>
+    {% endif %}
 
     <!-- Year Filter -->
     <div class="filter-bar">
@@ -288,6 +335,11 @@
     <div class="dept-section">
         <div class="dept-title">
             🏫 {{ dept.grouper }} — {{ dept.list|length }} Student(s)
+            <a href="/meeting/bulk-add/?dept={{ dept.grouper|urlencode }}"
+               class="btn-bulk-dept"
+               style="margin-left:auto;">
+                📋 Assign Meeting to All in Dept
+            </a>
         </div>
         <div class="table-wrap">
             <table>

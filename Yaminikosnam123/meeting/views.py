@@ -108,3 +108,63 @@ def delete_meeting(request, meeting_id):
         meeting.delete()
         return redirect(f'/meeting/view/{student_id}')
     return render(request, 'meeting/delete.html', {'meeting': meeting})
+
+
+@login_required(login_url='/login')
+def bulk_add_meeting(request):
+    """
+    Assign the same meeting to multiple students at once.
+    Supports:
+      - All students of this mentor
+      - All students in a specific department
+      - A hand-picked selection of students (checkboxes)
+    """
+    all_students = Student.objects.filter(mentor=request.user).order_by('department', 'name')
+
+    # Build department list for the filter dropdown
+    departments = all_students.values_list('department', flat=True).distinct().order_by('department')
+
+    # Pre-filter by department if requested via GET param
+    selected_dept = request.GET.get('dept', '')
+    if selected_dept:
+        preselected = all_students.filter(department=selected_dept)
+    else:
+        preselected = all_students
+
+    error = None
+    success_count = 0
+
+    if request.method == 'POST':
+        date_val      = request.POST.get('date', '').strip()
+        meeting_type  = request.POST.get('meeting_type', 'general')
+        discussion    = request.POST.get('discussion', '').strip()
+        guidance      = request.POST.get('guidance', '').strip()
+        follow_up     = request.POST.get('follow_up', '').strip()
+        student_ids   = request.POST.getlist('student_ids')   # checkboxes
+
+        if not date_val or not discussion:
+            error = 'Date and Discussion Notes are required.'
+        elif not student_ids:
+            error = 'Please select at least one student.'
+        else:
+            for sid in student_ids:
+                student = Student.objects.filter(id=sid, mentor=request.user).first()
+                if student:
+                    Meeting.objects.create(
+                        student=student,
+                        date=date_val,
+                        meeting_type=meeting_type,
+                        discussion=discussion,
+                        guidance=guidance,
+                        follow_up=follow_up,
+                    )
+                    success_count += 1
+            return redirect(f'/meeting/?bulk_success={success_count}')
+
+    return render(request, 'meeting/bulk_add.html', {
+        'all_students': all_students,
+        'preselected': preselected,
+        'departments': departments,
+        'selected_dept': selected_dept,
+        'error': error,
+    })
