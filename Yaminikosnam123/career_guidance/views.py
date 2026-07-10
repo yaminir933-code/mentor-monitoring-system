@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from meeting.models import Student
-from .models import CareerProfile, HigherStudiesRecord, PlacementRecord
+from .models import CareerProfile, HigherStudiesRecord, PlacementRecord, PersonalityDevelopment
 
 @login_required(login_url='/login')
 def career_home(request):
@@ -34,13 +34,15 @@ def career_profile(request, student_id):
         profile = CareerProfile.objects.get(student=student)
     except CareerProfile.DoesNotExist:
         profile = None
-    higher_records = HigherStudiesRecord.objects.filter(profile=profile) if profile else []
-    placement_records = PlacementRecord.objects.filter(profile=profile) if profile else []
+    higher_records      = HigherStudiesRecord.objects.filter(profile=profile) if profile else []
+    placement_records   = PlacementRecord.objects.filter(profile=profile) if profile else []
+    personality_records = PersonalityDevelopment.objects.filter(profile=profile).order_by('-recorded_date') if profile else []
     return render(request, 'career/profile.html', {
         'student': student,
         'profile': profile,
         'higher_records': higher_records,
         'placement_records': placement_records,
+        'personality_records': personality_records,
     })
 
 @login_required(login_url='/login')
@@ -245,3 +247,101 @@ def delete_career_profile(request, student_id):
     except CareerProfile.DoesNotExist:
         pass
     return redirect('/career/')
+
+
+# ── Personality Development views ──────────────────────────────────────────
+
+@login_required(login_url='/login')
+def add_personality(request, student_id):
+    student = get_object_or_404(Student, id=student_id)
+    profile, _ = CareerProfile.objects.get_or_create(student=student)
+    error = None
+
+    if request.method == 'POST':
+        recorded_date          = request.POST.get('recorded_date', '')
+        goal_category          = request.POST.get('goal_category', 'general')
+        technical_skills_gap   = request.POST.get('technical_skills_gap', '')
+        soft_skills_gap        = request.POST.get('soft_skills_gap', '')
+        communication_level    = request.POST.get('communication_level', 'average')
+        leadership_level       = request.POST.get('leadership_level', 'average')
+        problem_solving_level  = request.POST.get('problem_solving_level', 'average')
+        personal_issue         = request.POST.get('personal_issue', 'none')
+        personal_issue_details = request.POST.get('personal_issue_details', '')
+        emotional_state        = request.POST.get('emotional_state', '')
+        mentor_observations    = request.POST.get('mentor_observations', '')
+        action_plan            = request.POST.get('action_plan', '')
+        resources_suggested    = request.POST.get('resources_suggested', '')
+        follow_up_date         = request.POST.get('follow_up_date') or None
+        status                 = request.POST.get('status', 'identified')
+        progress_notes         = request.POST.get('progress_notes', '')
+
+        if not recorded_date:
+            error = 'Date is required.'
+        else:
+            PersonalityDevelopment.objects.create(
+                profile=profile,
+                recorded_date=recorded_date,
+                goal_category=goal_category,
+                technical_skills_gap=technical_skills_gap,
+                soft_skills_gap=soft_skills_gap,
+                communication_level=communication_level,
+                leadership_level=leadership_level,
+                problem_solving_level=problem_solving_level,
+                personal_issue=personal_issue,
+                personal_issue_details=personal_issue_details,
+                emotional_state=emotional_state,
+                mentor_observations=mentor_observations,
+                action_plan=action_plan,
+                resources_suggested=resources_suggested,
+                follow_up_date=follow_up_date,
+                status=status,
+                progress_notes=progress_notes,
+            )
+            return redirect(f'/career/profile/{student_id}#personality')
+
+    return render(request, 'career/add_personality.html', {
+        'student': student,
+        'error': error,
+    })
+
+
+@login_required(login_url='/login')
+def edit_personality(request, record_id):
+    record = get_object_or_404(PersonalityDevelopment, id=record_id)
+    student_id = record.profile.student.id
+    error = None
+
+    if request.method == 'POST':
+        record.recorded_date          = request.POST.get('recorded_date', record.recorded_date)
+        record.goal_category          = request.POST.get('goal_category', record.goal_category)
+        record.technical_skills_gap   = request.POST.get('technical_skills_gap', '')
+        record.soft_skills_gap        = request.POST.get('soft_skills_gap', '')
+        record.communication_level    = request.POST.get('communication_level', 'average')
+        record.leadership_level       = request.POST.get('leadership_level', 'average')
+        record.problem_solving_level  = request.POST.get('problem_solving_level', 'average')
+        record.personal_issue         = request.POST.get('personal_issue', 'none')
+        record.personal_issue_details = request.POST.get('personal_issue_details', '')
+        record.emotional_state        = request.POST.get('emotional_state', '')
+        record.mentor_observations    = request.POST.get('mentor_observations', '')
+        record.action_plan            = request.POST.get('action_plan', '')
+        record.resources_suggested    = request.POST.get('resources_suggested', '')
+        record.follow_up_date         = request.POST.get('follow_up_date') or None
+        record.status                 = request.POST.get('status', 'identified')
+        record.progress_notes         = request.POST.get('progress_notes', '')
+        record.save()
+        return redirect(f'/career/profile/{student_id}#personality')
+
+    return render(request, 'career/edit_personality.html', {
+        'record': record,
+        'error': error,
+    })
+
+
+@login_required(login_url='/login')
+def delete_personality(request, record_id):
+    record = get_object_or_404(PersonalityDevelopment, id=record_id)
+    student_id = record.profile.student.id
+    if request.method == 'POST':
+        record.delete()
+        return redirect(f'/career/profile/{student_id}#personality')
+    return render(request, 'career/delete.html', {'record': record, 'type': 'personality'})

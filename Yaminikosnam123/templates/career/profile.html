@@ -73,8 +73,8 @@ tr:hover td { background: #fce4ec; }
         <p>Placement Records</p>
       </div>
       <div class="info-card">
-        <h3>{{ profile.get_career_path_display }}</h3>
-        <p>Career Path</p>
+        <h3>{{ personality_records|length }}</h3>
+        <p>🌱 Personality Dev Records</p>
       </div>
     </div>
     {% endif %}
@@ -164,6 +164,132 @@ tr:hover td { background: #fce4ec; }
     <p style="color:#999; text-align:center; padding:1rem;">No placement records yet.</p>
     {% endif %}
   </div>
+  <!-- Personality Development Section -->
+  <div class="profile-card" id="personality">
+    <div class="section-title">🌱 Personality Development</div>
+    <a class="btn-add" href="/career/add-personality/{{ student.id }}">+ Add Personality Development Record</a>
+
+    {% if personality_records %}
+    {% for record in personality_records %}
+    <div style="border:1.5px solid #e1bee7;border-radius:12px;padding:1.2rem 1.5rem;margin-bottom:1.2rem;background:#fdf6ff;">
+
+      <!-- Record header -->
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem;">
+        <div style="display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;">
+          <span style="font-weight:700;color:#6a1b9a;font-size:.95rem;">📅 {{ record.recorded_date }}</span>
+          <span style="background:#f3e5f5;color:#6a1b9a;padding:3px 10px;border-radius:12px;font-size:.78rem;font-weight:600;">{{ record.get_goal_category_display }}</span>
+          {% if record.status == 'resolved' %}
+            <span style="background:#e8f5e9;color:#2e7d32;padding:3px 10px;border-radius:12px;font-size:.78rem;font-weight:600;">✅ Resolved</span>
+          {% elif record.status == 'improved' %}
+            <span style="background:#e3f2fd;color:#1565c0;padding:3px 10px;border-radius:12px;font-size:.78rem;font-weight:600;">📈 Improved</span>
+          {% elif record.status == 'in_progress' %}
+            <span style="background:#fff8e1;color:#f57f17;padding:3px 10px;border-radius:12px;font-size:.78rem;font-weight:600;">⏳ In Progress</span>
+          {% else %}
+            <span style="background:#fce4ec;color:#c62828;padding:3px 10px;border-radius:12px;font-size:.78rem;font-weight:600;">🔍 Identified</span>
+          {% endif %}
+        </div>
+        <div style="display:flex;gap:.5rem;">
+          <a href="/career/edit-personality/{{ record.id }}" style="background:#1976D2;color:white;padding:5px 12px;border-radius:4px;text-decoration:none;font-size:.8rem;">✏️ Edit</a>
+          <form method="POST" action="/career/delete-personality/{{ record.id }}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" onclick="return confirm('Delete this record?')" style="background:#e53935;color:white;padding:5px 12px;border:none;border-radius:4px;cursor:pointer;font-size:.8rem;">🗑️ Delete</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Skill levels -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin-bottom:1rem;">
+        {% with levels="none,beginner,average,good,excellent" %}
+        <div style="background:white;border-radius:8px;padding:.7rem 1rem;text-align:center;border:1px solid #e1bee7;">
+          <div style="font-size:.75rem;color:#777;margin-bottom:.3rem;font-weight:600;">COMMUNICATION</div>
+          <div style="font-weight:700;color:#9C27B0;font-size:.9rem;">{{ record.get_communication_level_display }}</div>
+        </div>
+        <div style="background:white;border-radius:8px;padding:.7rem 1rem;text-align:center;border:1px solid #e1bee7;">
+          <div style="font-size:.75rem;color:#777;margin-bottom:.3rem;font-weight:600;">LEADERSHIP</div>
+          <div style="font-weight:700;color:#9C27B0;font-size:.9rem;">{{ record.get_leadership_level_display }}</div>
+        </div>
+        <div style="background:white;border-radius:8px;padding:.7rem 1rem;text-align:center;border:1px solid #e1bee7;">
+          <div style="font-size:.75rem;color:#777;margin-bottom:.3rem;font-weight:600;">PROBLEM SOLVING</div>
+          <div style="font-weight:700;color:#9C27B0;font-size:.9rem;">{{ record.get_problem_solving_level_display }}</div>
+        </div>
+        {% endwith %}
+      </div>
+
+      <!-- Details grid -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;font-size:.85rem;">
+
+        {% if record.technical_skills_gap %}
+        <div style="background:white;border-radius:8px;padding:.8rem 1rem;border-left:3px solid #9C27B0;">
+          <div style="font-weight:700;color:#555;margin-bottom:.3rem;">🛠️ Technical Skills Gap</div>
+          <div style="color:#666;line-height:1.5;">{{ record.technical_skills_gap }}</div>
+        </div>
+        {% endif %}
+
+        {% if record.soft_skills_gap %}
+        <div style="background:white;border-radius:8px;padding:.8rem 1rem;border-left:3px solid #AB47BC;">
+          <div style="font-weight:700;color:#555;margin-bottom:.3rem;">🗣️ Soft Skills Gap</div>
+          <div style="color:#666;line-height:1.5;">{{ record.soft_skills_gap }}</div>
+        </div>
+        {% endif %}
+
+        {% if record.personal_issue != 'none' %}
+        <div style="background:#fff8e1;border-radius:8px;padding:.8rem 1rem;border-left:3px solid #FFA000;">
+          <div style="font-weight:700;color:#555;margin-bottom:.3rem;">⚠️ Personal Issue — {{ record.get_personal_issue_display }}</div>
+          <div style="color:#666;line-height:1.5;">{{ record.personal_issue_details|default:"—" }}</div>
+        </div>
+        {% endif %}
+
+        {% if record.emotional_state %}
+        <div style="background:#fce4ec;border-radius:8px;padding:.8rem 1rem;border-left:3px solid #e91e63;">
+          <div style="font-weight:700;color:#555;margin-bottom:.3rem;">💭 Emotional State</div>
+          <div style="color:#666;line-height:1.5;">{{ record.emotional_state }}</div>
+        </div>
+        {% endif %}
+
+        {% if record.mentor_observations %}
+        <div style="background:white;border-radius:8px;padding:.8rem 1rem;border-left:3px solid #1976D2;">
+          <div style="font-weight:700;color:#555;margin-bottom:.3rem;">👁️ Mentor Observations</div>
+          <div style="color:#666;line-height:1.5;">{{ record.mentor_observations }}</div>
+        </div>
+        {% endif %}
+
+        {% if record.action_plan %}
+        <div style="background:#e8f5e9;border-radius:8px;padding:.8rem 1rem;border-left:3px solid #4CAF50;">
+          <div style="font-weight:700;color:#555;margin-bottom:.3rem;">📋 Action Plan</div>
+          <div style="color:#666;line-height:1.5;">{{ record.action_plan }}</div>
+        </div>
+        {% endif %}
+
+        {% if record.resources_suggested %}
+        <div style="background:white;border-radius:8px;padding:.8rem 1rem;border-left:3px solid #FF9800;">
+          <div style="font-weight:700;color:#555;margin-bottom:.3rem;">📚 Resources Suggested</div>
+          <div style="color:#666;line-height:1.5;">{{ record.resources_suggested }}</div>
+        </div>
+        {% endif %}
+
+        {% if record.progress_notes %}
+        <div style="background:#e3f2fd;border-radius:8px;padding:.8rem 1rem;border-left:3px solid #2196F3;">
+          <div style="font-weight:700;color:#555;margin-bottom:.3rem;">📈 Progress Notes</div>
+          <div style="color:#666;line-height:1.5;">{{ record.progress_notes }}</div>
+        </div>
+        {% endif %}
+
+      </div>
+
+      {% if record.follow_up_date %}
+      <div style="margin-top:.8rem;font-size:.82rem;color:#777;">
+        📅 Follow-up scheduled: <strong style="color:#6a1b9a;">{{ record.follow_up_date }}</strong>
+      </div>
+      {% endif %}
+
+    </div>
+    {% endfor %}
+
+    {% else %}
+    <p style="color:#999;text-align:center;padding:1.5rem;">No personality development records yet. Click "+ Add" to record skills gaps, personal challenges and mentor action plans.</p>
+    {% endif %}
+  </div>
+
 </div>
 </body>
 </html>

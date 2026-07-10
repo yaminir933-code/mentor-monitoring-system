@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edit Personality Development Record</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f2f5;}
+.navbar{background:#9C27B0;padding:1rem 2rem;color:white;display:flex;justify-content:space-between;align-items:center;}
+.navbar a{color:white;text-decoration:none;font-size:.95rem;}
+.container{padding:2rem;max-width:800px;margin:auto;}
+.form-card{background:white;border-radius:16px;padding:2rem;box-shadow:0 4px 16px rgba(0,0,0,.1);}
+.form-title{color:#7B1FA2;font-size:1.4rem;font-weight:700;margin-bottom:.3rem;}
+.form-subtitle{color:#777;font-size:.9rem;margin-bottom:1.8rem;}
+.section-title{color:#7B1FA2;font-weight:700;font-size:.95rem;margin:1.5rem 0 .8rem;padding-bottom:.5rem;border-bottom:2px solid #f3e5f5;display:flex;align-items:center;gap:.4rem;}
+.form-group{margin-bottom:1.1rem;}
+label{display:block;color:#555;font-weight:600;margin-bottom:.4rem;font-size:.88rem;}
+input,select,textarea{width:100%;padding:10px 14px;border:1.5px solid #ddd;border-radius:8px;font-size:.93rem;font-family:inherit;transition:border-color .2s;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#9C27B0;box-shadow:0 0 0 3px rgba(156,39,176,.1);}
+textarea{height:85px;resize:vertical;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;}
+.btn-save{background:#9C27B0;color:white;padding:12px;width:100%;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;margin-top:1rem;transition:background .2s;}
+.btn-save:hover{background:#7B1FA2;}
+.btn-cancel{display:block;text-align:center;margin-top:.8rem;color:#9C27B0;font-size:.9rem;text-decoration:none;}
+.error{background:#ffebee;color:#c62828;padding:.8rem 1rem;border-radius:8px;margin-bottom:1rem;font-size:.9rem;}
+.tip{background:#f3e5f5;border-left:4px solid #9C27B0;color:#555;padding:.6rem 1rem;border-radius:0 8px 8px 0;font-size:.83rem;margin-bottom:1rem;}
+@media(max-width:640px){.form-row,.form-row-3{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="navbar">
+  <span>🎓 MentorApp</span>
+  <a href="/career/profile/{{ record.profile.student.id }}">← Back to Profile</a>
+</div>
+<div class="container">
+<div class="form-card">
+  <div class="form-title">✏️ Edit Personality Development Record</div>
+  <div class="form-subtitle">Student: <b>{{ record.profile.student.name }}</b> | {{ record.profile.student.department }}</div>
+  {% if error %}<div class="error">⚠️ {{ error }}</div>{% endif %}
+
+  <form method="POST">
+  {% csrf_token %}
+
+  <!-- Basic Info -->
+  <div class="section-title">📋 Basic Information</div>
+  <div class="form-row">
+    <div class="form-group">
+      <label>Date of Record *</label>
+      <input type="date" name="recorded_date" value="{{ record.recorded_date|date:'Y-m-d' }}" required>
+    </div>
+    <div class="form-group">
+      <label>Goal Category</label>
+      <select name="goal_category">
+        <option value="higher_studies" {% if record.goal_category == 'higher_studies' %}selected{% endif %}>Preparing for Higher Studies</option>
+        <option value="job_placement"  {% if record.goal_category == 'job_placement'  %}selected{% endif %}>Preparing for Job Placement</option>
+        <option value="both"           {% if record.goal_category == 'both'           %}selected{% endif %}>Both Higher Studies & Job</option>
+        <option value="general"        {% if record.goal_category == 'general'        %}selected{% endif %}>General Development</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Skills Gap -->
+  <div class="section-title">🛠️ Skills Gap Assessment</div>
+  <div class="tip">💡 Update the technical and soft skills the student is currently lacking.</div>
+  <div class="form-group">
+    <label>Technical Skills Gap</label>
+    <textarea name="technical_skills_gap" placeholder="e.g. Python basics, SQL queries, MS Excel…">{{ record.technical_skills_gap }}</textarea>
+  </div>
+  <div class="form-group">
+    <label>Soft Skills Gap</label>
+    <textarea name="soft_skills_gap" placeholder="e.g. Public speaking, Interview skills…">{{ record.soft_skills_gap }}</textarea>
+  </div>
+
+  <div class="section-title">📊 Skill Level Assessment</div>
+  <div class="form-row-3">
+    <div class="form-group">
+      <label>Communication Level</label>
+      <select name="communication_level">
+        <option value="none"      {% if record.communication_level == 'none'      %}selected{% endif %}>Not Developed</option>
+        <option value="beginner"  {% if record.communication_level == 'beginner'  %}selected{% endif %}>Beginner</option>
+        <option value="average"   {% if record.communication_level == 'average'   %}selected{% endif %}>Average</option>
+        <option value="good"      {% if record.communication_level == 'good'      %}selected{% endif %}>Good</option>
+        <option value="excellent" {% if record.communication_level == 'excellent' %}selected{% endif %}>Excellent</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Leadership Level</label>
+      <select name="leadership_level">
+        <option value="none"      {% if record.leadership_level == 'none'      %}selected{% endif %}>Not Developed</option>
+        <option value="beginner"  {% if record.leadership_level == 'beginner'  %}selected{% endif %}>Beginner</option>
+        <option value="average"   {% if record.leadership_level == 'average'   %}selected{% endif %}>Average</option>
+        <option value="good"      {% if record.leadership_level == 'good'      %}selected{% endif %}>Good</option>
+        <option value="excellent" {% if record.leadership_level == 'excellent' %}selected{% endif %}>Excellent</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Problem Solving Level</label>
+      <select name="problem_solving_level">
+        <option value="none"      {% if record.problem_solving_level == 'none'      %}selected{% endif %}>Not Developed</option>
+        <option value="beginner"  {% if record.problem_solving_level == 'beginner'  %}selected{% endif %}>Beginner</option>
+        <option value="average"   {% if record.problem_solving_level == 'average'   %}selected{% endif %}>Average</option>
+        <option value="good"      {% if record.problem_solving_level == 'good'      %}selected{% endif %}>Good</option>
+        <option value="excellent" {% if record.problem_solving_level == 'excellent' %}selected{% endif %}>Excellent</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Personal Challenges -->
+  <div class="section-title">💬 Personal Challenges</div>
+  <div class="form-row">
+    <div class="form-group">
+      <label>Primary Personal Issue</label>
+      <select name="personal_issue">
+        <option value="none"        {% if record.personal_issue == 'none'        %}selected{% endif %}>None</option>
+        <option value="confidence"  {% if record.personal_issue == 'confidence'  %}selected{% endif %}>Lack of Confidence</option>
+        <option value="anxiety"     {% if record.personal_issue == 'anxiety'     %}selected{% endif %}>Exam / Interview Anxiety</option>
+        <option value="family"      {% if record.personal_issue == 'family'      %}selected{% endif %}>Family Pressure / Issues</option>
+        <option value="financial"   {% if record.personal_issue == 'financial'   %}selected{% endif %}>Financial Difficulties</option>
+        <option value="health"      {% if record.personal_issue == 'health'      %}selected{% endif %}>Health Issues</option>
+        <option value="peer"        {% if record.personal_issue == 'peer'        %}selected{% endif %}>Peer Pressure</option>
+        <option value="motivation"  {% if record.personal_issue == 'motivation'  %}selected{% endif %}>Lack of Motivation</option>
+        <option value="time_mgmt"   {% if record.personal_issue == 'time_mgmt'   %}selected{% endif %}>Poor Time Management</option>
+        <option value="other"       {% if record.personal_issue == 'other'       %}selected{% endif %}>Other</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Status</label>
+      <select name="status">
+        <option value="identified"  {% if record.status == 'identified'  %}selected{% endif %}>Identified</option>
+        <option value="in_progress" {% if record.status == 'in_progress' %}selected{% endif %}>In Progress</option>
+        <option value="improved"    {% if record.status == 'improved'    %}selected{% endif %}>Improved</option>
+        <option value="resolved"    {% if record.status == 'resolved'    %}selected{% endif %}>Resolved</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-group">
+    <label>Personal Issue Details</label>
+    <textarea name="personal_issue_details" placeholder="Describe the personal challenge in detail…">{{ record.personal_issue_details }}</textarea>
+  </div>
+  <div class="form-group">
+    <label>Emotional / Mental Well-being Notes</label>
+    <textarea name="emotional_state" placeholder="Student's current emotional state, stress levels…">{{ record.emotional_state }}</textarea>
+  </div>
+
+  <!-- Mentor Action Plan -->
+  <div class="section-title">📝 Mentor Observations & Action Plan</div>
+  <div class="form-group">
+    <label>Mentor Observations</label>
+    <textarea name="mentor_observations" placeholder="What has the mentor observed about this student…">{{ record.mentor_observations }}</textarea>
+  </div>
+  <div class="form-group">
+    <label>Action Plan</label>
+    <textarea name="action_plan" placeholder="Steps planned to help the student improve…">{{ record.action_plan }}</textarea>
+  </div>
+  <div class="form-group">
+    <label>Resources Suggested</label>
+    <textarea name="resources_suggested" placeholder="Books, courses, counsellors suggested…">{{ record.resources_suggested }}</textarea>
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label>Follow-up Date</label>
+      <input type="date" name="follow_up_date" value="{{ record.follow_up_date|date:'Y-m-d' }}">
+    </div>
+    <div class="form-group">
+      <label>Progress Notes</label>
+      <input type="text" name="progress_notes" value="{{ record.progress_notes }}" placeholder="Any progress noted so far…">
+    </div>
+  </div>
+
+  <button type="submit" class="btn-save">💾 Save Changes</button>
+  <a href="/career/profile/{{ record.profile.student.id }}#personality" class="btn-cancel">Cancel</a>
+  </form>
+</div>
+</div>
+</body>
+</html>
