@@ -101,23 +101,69 @@ def semester_view(request, student_id, sem_number):
 def add_subject(request, student_id, sem_number):
     student = get_object_or_404(Student, id=student_id)
     if request.method == 'POST':
-        # Handle both single subject (legacy) and bulk subjects
+        subject_names = []
+
         if 'subject_names' in request.POST:
-            # Bulk add from multi-select dropdown
-            subject_names = request.POST.getlist('subject_names')
+            subject_names = [n for n in request.POST.getlist('subject_names') if n]
             for name in subject_names:
-                if name:
+                Subject.objects.get_or_create(
+                    student=student,
+                    semester=sem_number,
+                    name=name
+                )
+        else:
+            name = request.POST.get('subject_name')
+            if name:
+                subject_names = [name]
+                Subject.objects.get_or_create(student=student, semester=sem_number, name=name)
+
+        # If "apply to all students" checkbox is ticked, copy to every student of this mentor
+        if request.POST.get('apply_to_all') == 'yes' and subject_names:
+            all_students = Student.objects.filter(
+                mentor=request.user
+            ).exclude(id=student.id)
+            for other_student in all_students:
+                for name in subject_names:
                     Subject.objects.get_or_create(
-                        student=student,
+                        student=other_student,
                         semester=sem_number,
                         name=name
                     )
-        else:
-            # Legacy single subject add
-            name = request.POST.get('subject_name')
-            if name:
-                Subject.objects.create(student=student, semester=sem_number, name=name)
+
     return redirect(f'/academic/semester/{student_id}/{sem_number}/')
+
+
+@login_required(login_url='/login')
+def apply_subjects_to_department(request, student_id, sem_number):
+    """
+    Copy ALL subjects currently saved for this student+semester
+    to every other student under this mentor (all departments).
+    Triggered by the standalone 'Apply to All Students' button.
+    """
+    student = get_object_or_404(Student, id=student_id)
+    subjects = Subject.objects.filter(student=student, semester=sem_number)
+
+    if subjects.exists():
+        all_students = Student.objects.filter(
+            mentor=request.user,
+        ).exclude(id=student.id)
+
+        applied_to = 0
+        for other_student in all_students:
+            for subj in subjects:
+                Subject.objects.get_or_create(
+                    student=other_student,
+                    semester=sem_number,
+                    name=subj.name
+                )
+            applied_to += 1
+
+        return redirect(
+            f'/academic/semester/{student_id}/{sem_number}/'
+            f'?apply_success={applied_to}'
+        )
+
+    return redirect(f'/academic/semester/{student_id}/{sem_number}/?apply_error=no_subjects')
 
 @login_required(login_url='/login')
 def edit_subject(request, subject_id):

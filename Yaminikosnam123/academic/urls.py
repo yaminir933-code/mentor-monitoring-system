@@ -5,6 +5,7 @@ urlpatterns = [
     path('', views.academic_home, name='academic_home'),
     path('semester/<int:student_id>/<int:sem_number>/', views.semester_view, name='semester_view'),
     path('add-subject/<int:student_id>/<int:sem_number>/', views.add_subject, name='add_subject'),
+    path('apply-subjects-to-dept/<int:student_id>/<int:sem_number>/', views.apply_subjects_to_department, name='apply_subjects_to_dept'),
     path('get-subjects/<int:student_id>/<int:sem_number>/', views.get_subjects_by_semester, name='get_subjects'),
     path('edit-subject/<int:subject_id>/', views.edit_subject, name='edit_subject'),
     path('delete-subject/<int:subject_id>/', views.delete_subject, name='delete_subject'),
