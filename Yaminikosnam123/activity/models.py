@@ -48,17 +48,29 @@ class ActivityRecord(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def get_upload_url(self):
-        """Return the correct Cloudinary URL for the uploaded file."""
-        if not self.upload_file:
+        """
+        Build a guaranteed https:// Cloudinary raw URL for the uploaded file.
+        activity files are always uploaded via RawMediaCloudinaryStorage
+        so the resource_type is always 'raw'.
+        """
+        if not self.upload_file or not self.upload_file.name:
             return None
-        # Build the correct raw Cloudinary URL using the cloudinary library
         try:
-            url, _ = cloudinary.utils.cloudinary_url(
-                self.upload_file.name,
-                resource_type='raw',
-                secure=True,
-            )
-            return url
+            name = self.upload_file.name.strip('/')
+            # If the name is already a full URL, fix the scheme and return it
+            if 'cloudinary.com' in name:
+                if name.startswith('https://'):
+                    return name
+                if name.startswith('http://'):
+                    return name.replace('http://', 'https://', 1)
+                if name.startswith('//'):
+                    return f'https:{name}'
+                return f'https://{name}'
+            # Build the correct Cloudinary raw URL manually
+            cloud_name = cloudinary.config().cloud_name
+            if not cloud_name:
+                return None
+            return f"https://res.cloudinary.com/{cloud_name}/raw/upload/{name}"
         except Exception:
             return None
 

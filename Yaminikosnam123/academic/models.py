@@ -1,6 +1,6 @@
 from django.db import models
 from meeting.models import Student
-from cloudinary_storage.storage import RawMediaCloudinaryStorage
+from cloudinary_storage.storage import MediaCloudinaryStorage
 import cloudinary
 
 class SubjectCatalog(models.Model):
@@ -50,25 +50,40 @@ class Project(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     semester = models.IntegerField()
     name = models.CharField(max_length=200)
+    # Use MediaCloudinaryStorage so all files (old and new) are image/raw type.
+    # Cloudinary accepts PNG/JPG/PDF under the image resource type.
     file = models.FileField(
         upload_to='projects/',
         blank=True,
         null=True,
-        storage=RawMediaCloudinaryStorage(),
+        storage=MediaCloudinaryStorage(),
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def get_file_url(self):
-        """Return the correct Cloudinary URL for the project file."""
-        if not self.file:
+        """
+        Build a guaranteed https:// Cloudinary URL for the project file.
+        Files uploaded via MediaCloudinaryStorage use resource_type='image'.
+        URL format: https://res.cloudinary.com/{cloud}/image/upload/{name}
+        """
+        if not self.file or not self.file.name:
             return None
         try:
-            url, _ = cloudinary.utils.cloudinary_url(
-                self.file.name,
-                resource_type='raw',
-                secure=True,
-            )
-            return url
+            name = self.file.name.strip('/')
+            # If the name is already a full URL, fix the scheme and return it
+            if 'cloudinary.com' in name:
+                if name.startswith('https://'):
+                    return name
+                if name.startswith('http://'):
+                    return name.replace('http://', 'https://', 1)
+                if name.startswith('//'):
+                    return f'https:{name}'
+                return f'https://{name}'
+            # Build the correct Cloudinary image URL manually
+            cloud_name = cloudinary.config().cloud_name
+            if not cloud_name:
+                return None
+            return f"https://res.cloudinary.com/{cloud_name}/image/upload/{name}"
         except Exception:
             return None
 
