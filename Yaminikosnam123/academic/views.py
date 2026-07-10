@@ -138,8 +138,11 @@ def apply_subjects_to_department(request, student_id, sem_number):
     """
     Copy ALL subjects currently saved for this student+semester
     to every other student under this mentor (all departments).
-    Triggered by the standalone 'Apply to All Students' button.
+    Must be a POST request for safety.
     """
+    if request.method != 'POST':
+        return redirect(f'/academic/semester/{student_id}/{sem_number}/')
+
     student = get_object_or_404(Student, id=student_id)
     subjects = Subject.objects.filter(student=student, semester=sem_number)
 
