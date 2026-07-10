@@ -158,17 +158,6 @@ textarea{height:85px;resize:vertical;}
     <label>Resources Suggested</label>
     <textarea name="resources_suggested" placeholder="Books, courses, counsellors suggested…">{{ record.resources_suggested }}</textarea>
   </div>
-  <div class="form-row">
-    <div class="form-group">
-      <label>Follow-up Date</label>
-      <input type="date" name="follow_up_date" value="{{ record.follow_up_date|date:'Y-m-d' }}">
-    </div>
-    <div class="form-group">
-      <label>Progress Notes</label>
-      <input type="text" name="progress_notes" value="{{ record.progress_notes }}" placeholder="Any progress noted so far…">
-    </div>
-  </div>
-
   <button type="submit" class="btn-save">💾 Save Changes</button>
   <a href="/career/profile/{{ record.profile.student.id }}#personality" class="btn-cancel">Cancel</a>
   </form>

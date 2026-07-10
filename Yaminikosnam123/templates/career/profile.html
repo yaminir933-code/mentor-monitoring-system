@@ -267,20 +267,7 @@ tr:hover td { background: #fce4ec; }
         </div>
         {% endif %}
 
-        {% if record.progress_notes %}
-        <div style="background:#e3f2fd;border-radius:8px;padding:.8rem 1rem;border-left:3px solid #2196F3;">
-          <div style="font-weight:700;color:#555;margin-bottom:.3rem;">📈 Progress Notes</div>
-          <div style="color:#666;line-height:1.5;">{{ record.progress_notes }}</div>
-        </div>
-        {% endif %}
-
       </div>
-
-      {% if record.follow_up_date %}
-      <div style="margin-top:.8rem;font-size:.82rem;color:#777;">
-        📅 Follow-up scheduled: <strong style="color:#6a1b9a;">{{ record.follow_up_date }}</strong>
-      </div>
-      {% endif %}
 
     </div>
     {% endfor %}
