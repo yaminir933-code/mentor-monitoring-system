@@ -117,15 +117,16 @@ def add_subject(request, student_id, sem_number):
                 subject_names = [name]
                 Subject.objects.get_or_create(student=student, semester=sem_number, name=name)
 
-        # If "apply to all students" checkbox is ticked, copy to every student of this mentor
+        # If "apply to all students" checkbox is ticked, copy only to same-department students
         if request.POST.get('apply_to_all') == 'yes' and subject_names:
-            all_students = Student.objects.filter(
-                mentor=request.user
+            dept_students = Student.objects.filter(
+                mentor=request.user,
+                department=student.department,
             ).exclude(id=student.id)
-            for other_student in all_students:
+            for dept_student in dept_students:
                 for name in subject_names:
                     Subject.objects.get_or_create(
-                        student=other_student,
+                        student=dept_student,
                         semester=sem_number,
                         name=name
                     )
@@ -137,7 +138,7 @@ def add_subject(request, student_id, sem_number):
 def apply_subjects_to_department(request, student_id, sem_number):
     """
     Copy ALL subjects currently saved for this student+semester
-    to every other student under this mentor (all departments).
+    to every other student in the SAME DEPARTMENT under this mentor.
     Must be a POST request for safety.
     """
     if request.method != 'POST':
@@ -147,15 +148,16 @@ def apply_subjects_to_department(request, student_id, sem_number):
     subjects = Subject.objects.filter(student=student, semester=sem_number)
 
     if subjects.exists():
-        all_students = Student.objects.filter(
+        dept_students = Student.objects.filter(
             mentor=request.user,
+            department=student.department,
         ).exclude(id=student.id)
 
         applied_to = 0
-        for other_student in all_students:
+        for dept_student in dept_students:
             for subj in subjects:
                 Subject.objects.get_or_create(
-                    student=other_student,
+                    student=dept_student,
                     semester=sem_number,
                     name=subj.name
                 )
@@ -163,7 +165,7 @@ def apply_subjects_to_department(request, student_id, sem_number):
 
         return redirect(
             f'/academic/semester/{student_id}/{sem_number}/'
-            f'?apply_success={applied_to}'
+            f'?apply_success={applied_to}&dept={student.department}'
         )
 
     return redirect(f'/academic/semester/{student_id}/{sem_number}/?apply_error=no_subjects')
