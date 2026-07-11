@@ -385,10 +385,15 @@ input[type="checkbox"] {
 function filterByDept(dept) {
     const rows = document.querySelectorAll('.student-row');
     rows.forEach(row => {
+        const cb = row.querySelector('.student-cb');
         if (!dept || row.dataset.dept === dept) {
             row.style.display = '';
+            if (dept) {
+                cb.checked = true; // Auto select all in this department
+            }
         } else {
             row.style.display = 'none';
+            cb.checked = false; // Uncheck hidden rows so they are not submitted
         }
     });
     updateCount();

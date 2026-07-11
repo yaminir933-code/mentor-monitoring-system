@@ -124,12 +124,11 @@ def bulk_add_meeting(request):
     # Build department list for the filter dropdown
     departments = all_students.values_list('department', flat=True).distinct().order_by('department')
 
-    # Pre-filter by department if requested via GET param
     selected_dept = request.GET.get('dept', '')
     if selected_dept:
         preselected = all_students.filter(department=selected_dept)
     else:
-        preselected = all_students
+        preselected = Student.objects.none()
 
     error = None
     success_count = 0
@@ -144,8 +143,10 @@ def bulk_add_meeting(request):
 
         if not date_val or not discussion:
             error = 'Date and Discussion Notes are required.'
+            preselected = all_students.filter(id__in=student_ids)
         elif not student_ids:
             error = 'Please select at least one student.'
+            preselected = all_students.filter(id__in=student_ids)
         else:
             for sid in student_ids:
                 student = Student.objects.filter(id=sid, mentor=request.user).first()
